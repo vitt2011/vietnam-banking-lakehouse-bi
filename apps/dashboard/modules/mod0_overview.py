@@ -22,7 +22,7 @@ from dashboard.services.query_service import (
     get_data_coverage_audit,
 )
 from dashboard.common_theme import (
-    apply_plotly_theme, render_led_card, get_theme_palette,
+    apply_plotly_theme, render_led_card, get_theme_palette, PLOTLY_CHART_CONFIG,
 )
 
 
@@ -35,15 +35,15 @@ def render_overview():
     # 1. VALUE PROPOSITION & RESEARCH CONTEXT HERO (NGHIÊM TÚC, HỌC THUẬT, KHÁCH QUAN)
     st.html(f"""
         <div style="background: {pal['bg_card']}; border: 1px solid {pal['border_color']}; border-left: 5px solid {pal['color_brand_led']}; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 10px {pal['shadow_color']};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <div style="font-size: 11px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1.2px;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1px;">
                     🏛️ PHÂN HỆ 01 • TOÀN CẢNH THỊ TRƯỜNG & CHẤT LƯỢNG DỮ LIỆU
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800;">
+                <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+                    <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800; white-space: nowrap;">
                         TRẠM PHÂN TÍCH CHUYÊN GIA
                     </span>
-                    <span style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800;">
+                    <span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800; white-space: nowrap;">
                         TOÀN VẸN DỮ LIỆU DWH
                     </span>
                 </div>
@@ -186,8 +186,10 @@ def render_overview():
             height=600,
         )
         fig_cap.update_traces(hovertemplate="<b>%{y}</b><br>Vốn điều lệ: <b>%{x:,.1f} Tỷ VND</b><extra></extra>")
-        fig_cap = apply_plotly_theme(fig_cap, height=600, title="Quy Mô Vốn Điều Lệ 27 Ngân Hàng (Tỷ VND)")
-        st.plotly_chart(fig_cap, use_container_width=True)
+        fig_cap.update_layout(legend=dict(orientation="h", yanchor="top", y=-0.14, xanchor="center", x=0.5))
+        fig_cap = apply_plotly_theme(fig_cap, height=620, title="Quy Mô Vốn Điều Lệ 27 Ngân Hàng (Tỷ VND)")
+        fig_cap.update_layout(margin=dict(b=95))
+        st.plotly_chart(fig_cap, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"overview_cap_{pal['mode']}")
 
     with c_chart2:
         df_banks_calc = df_banks.copy()
@@ -211,8 +213,10 @@ def render_overview():
             hovertemplate="<b>%{label}</b><br>Tổng vốn: <b>%{value:,.1f} Tỷ VND</b> (%{percent})<extra></extra>",
             marker=dict(line=dict(color=pal["bg_card"], width=2))
         )
-        fig_pie = apply_plotly_theme(fig_pie, height=600, title="Tỷ Trọng Vốn Điều Lệ Theo Nhóm Phân Tầng")
-        st.plotly_chart(fig_pie, use_container_width=True)
+        fig_pie.update_layout(legend=dict(orientation="h", yanchor="top", y=-0.10, xanchor="center", x=0.5))
+        fig_pie = apply_plotly_theme(fig_pie, height=620, title="Tỷ Trọng Vốn Điều Lệ Theo Nhóm Phân Tầng")
+        fig_pie.update_layout(margin=dict(b=95))
+        st.plotly_chart(fig_pie, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"overview_pie_{pal['mode']}")
 
     # 5. BÁO CÁO KIỂM TOÁN ĐỘ PHỦ DỮ LIỆU & GIẢI TRÌNH ĐƠN VỊ ĐẾM (DATA QUALITY AUDIT)
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)

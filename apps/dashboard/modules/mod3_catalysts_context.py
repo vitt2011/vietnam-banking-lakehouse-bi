@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from dashboard.common_theme import (
-    apply_plotly_theme, render_led_card, get_theme_palette,
+    apply_plotly_theme, render_led_card, get_theme_palette, PLOTLY_CHART_CONFIG,
 )
 from dashboard.services.query_service import (
     get_all_banks,
@@ -48,11 +48,11 @@ def render_catalysts_context():
     # Header Card định vị phân hệ
     st.html(f"""
         <div style="background: {pal['bg_card']}; border: 1px solid {pal['border_color']}; border-left: 5px solid {pal['color_brand']}; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 2px 10px {pal['shadow_color']};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <div style="font-size: 12px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1.2px;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 6px;">
+                <div style="font-size: 11.5px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1px;">
                     ⚡ PHÂN HỆ 04 • XÚC TÁC SỰ KIỆN & BỐI CẢNH VĨ MÔ
                 </div>
-                <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800;">
+                <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 800; white-space: nowrap;">
                     ĐỘNG LỰC THỊ TRƯỜNG
                 </span>
             </div>
@@ -102,10 +102,10 @@ def render_catalysts_context():
 
     # 4 TABS CHUYÊN BIỆT
     tab_macro, tab_events, tab_news, tab_tech = st.tabs([
-        "🏛️ 1. Truyền Dẫn Vĩ Mô SBV",
-        "🎯 2. Nghiên Cứu Sự Kiện Cổ Tức",
-        "📰 3. Luồng Tin & Công Bố Thông Tin",
-        "📈 4. Tóm Tắt Xu Hướng Thị Giá",
+        "🏛️ 1. Vĩ Mô SBV",
+        "🎯 2. Sự Kiện Cổ Tức",
+        "📰 3. Tin & Công Bố",
+        "📈 4. Xu Hướng Giá",
     ])
 
     # =========================================================================
@@ -165,11 +165,12 @@ def render_catalysts_context():
                     secondary_y=True
                 )
 
-            fig_macro = apply_plotly_theme(fig_macro, height=440, title=f"Tương Quan Thị Giá {selected_ticker} vs VN-Index & Lãi Suất Điều Hành SBV")
-            fig_macro.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
             fig_macro.update_yaxes(title_text="Giá Cổ Phiếu (VND)", secondary_y=False)
             fig_macro.update_yaxes(title_text="VN-Index (Điểm) / Lãi suất (%)", secondary_y=True)
-            st.plotly_chart(fig_macro, use_container_width=True)
+            fig_macro.update_layout(legend=dict(orientation="h", yanchor="top", y=-0.20, xanchor="center", x=0.5))
+            fig_macro = apply_plotly_theme(fig_macro, height=450, title=f"Tương Quan {selected_ticker} vs VN-Index & Lãi Suất SBV")
+            fig_macro.update_layout(margin=dict(b=95))
+            st.plotly_chart(fig_macro, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"cat_macro_{pal['mode']}")
 
             # Expander Ma Trận Đồng Pha Liên Ngân Hàng (Co-movement)
             with st.expander("🔬 Xem Phân Tích Nâng Cao: Ma Trận Đồng Pha Liên Ngân Hàng (Co-movement Heatmap Lag 0)", expanded=False):
@@ -190,7 +191,7 @@ def render_catalysts_context():
                         height=540
                     )
                     fig_heat = apply_plotly_theme(fig_heat, height=540, title="Ma Trận Tương Quan Đồng Pha Toàn Ngành (Lag 0)")
-                    st.plotly_chart(fig_heat, use_container_width=True)
+                    st.plotly_chart(fig_heat, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"cat_heat_{pal['mode']}")
 
     # =========================================================================
     # TAB 2: QUẢN TRỊ CỔ TỨC & NGHIÊN CỨU SỰ KIỆN (DIVIDEND EVENT STUDY)
@@ -298,9 +299,14 @@ def render_catalysts_context():
                     name="Cổ Tức Tiền Mặt (CAAR %)", line=dict(color=pal["accent_pink"], width=2.5, dash="dash")
                 ))
             fig_car.add_vline(x=0, line_dash="dot", line_color=pal["color_warn"], annotation_text="t=0 (Ngày GDKHQ)")
-            fig_car = apply_plotly_theme(fig_car, height=380, title="Lợi Suất Bất Thường Tích Lũy (CAAR %) Quanh Ngày GDKHQ Cổ Tức")
-            fig_car.update_layout(xaxis_title="Số phiên giao dịch so với ngày sự kiện", yaxis_title="CAAR (%)")
-            st.plotly_chart(fig_car, use_container_width=True)
+            fig_car.update_layout(
+                xaxis_title="Số phiên giao dịch so với ngày sự kiện",
+                yaxis_title="CAAR (%)",
+                legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5),
+            )
+            fig_car = apply_plotly_theme(fig_car, height=400, title="Lợi Suất Bất Thường Tích Lũy (CAAR %) Quanh GDKHQ")
+            fig_car.update_layout(margin=dict(b=95))
+            st.plotly_chart(fig_car, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"cat_caar_{pal['mode']}")
 
     # =========================================================================
     # TAB 3: DÒNG THÔNG TIN DOANH NGHIỆP & CÔNG BỐ CHÍNH THỨC
@@ -498,8 +504,9 @@ def render_catalysts_context():
             if sma50_v > 0:
                 fig_t.add_trace(go.Scatter(x=df_t["trading_date"], y=df_t["sma_50"], name="SMA 50", line=dict(color=pal["color_warn"], width=1.5, dash="dash")))
 
-            fig_t = apply_plotly_theme(fig_t, height=380, title=f"Đường Giá & Trung Bình Trượt SMA {selected_ticker} (120 Phiên Gần Nhất)")
-            fig_t.update_layout(yaxis_title="Giá (VND)", legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-            st.plotly_chart(fig_t, use_container_width=True)
+            fig_t.update_layout(yaxis_title="Giá (VND)", legend=dict(orientation="h", yanchor="top", y=-0.20, xanchor="center", x=0.5))
+            fig_t = apply_plotly_theme(fig_t, height=400, title=f"Đường Giá & SMA {selected_ticker} (120 Phiên Gần Nhất)")
+            fig_t.update_layout(margin=dict(b=90))
+            st.plotly_chart(fig_t, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"cat_sma_{pal['mode']}")
         else:
             st.info("Chưa có dữ liệu giá giao dịch.")

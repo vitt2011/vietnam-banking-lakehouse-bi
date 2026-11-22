@@ -23,7 +23,7 @@ from dashboard.services.query_service import (
     get_all_banks,
 )
 from dashboard.common_theme import (
-    apply_plotly_theme, render_led_card, get_theme_palette,
+    apply_plotly_theme, render_led_card, get_theme_palette, PLOTLY_CHART_CONFIG,
 )
 from stock_analysis.quant_service.valuation_residual_engine import get_valuation_residual_data
 
@@ -34,11 +34,11 @@ def render_valuation_gordon():
     # 1. HERO BANNER NGHIỆM THU NGHIÊM TÚC, HỌC THUẬT & TRÁCH NHIỆM
     st.html(f"""
         <div style="background: {pal['bg_card']}; border: 1px solid {pal['border_color']}; border-left: 5px solid {pal['color_brand_led']}; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 2px 10px {pal['shadow_color']};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <div style="font-size: 11px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1.2px;">
-                    ⚖️ PHÂN HỆ 02 • SÀNG LỌC CƠ HỘI & THẨM ĐỊNH ĐỊNH GIÁ (VALUATION LAB)
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 8px;">
+                <div style="font-size: 11px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1px;">
+                    ⚖️ PHÂN HỆ 02 • SÀNG LỌC CƠ HỘI & ĐỊNH GIÁ (VALUATION LAB)
                 </div>
-                <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 800;">
+                <span style="background: rgba(37, 99, 235, 0.08); color: {pal['color_brand_led']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 800; white-space: nowrap;">
                     EMPIRICAL VALUATION
                 </span>
             </div>
@@ -116,9 +116,9 @@ def render_valuation_gordon():
 
     # 3 TABS PHÂN TÍCH CHUYÊN NGHIỆP
     tab_matrix, tab_quant, tab_gordon_sim = st.tabs([
-        "📊 1. Ma Trận P/B vs ROE Toàn Ngành",
-        "🔬 2. Standardized Valuation Residual (Quant Core)",
-        "🎯 3. Thẩm Định Định Giá Nội Tại Gordon & Độ Nhạy",
+        "📊 1. Ma Trận P/B vs ROE",
+        "🔬 2. Phần Dư OLS (Quant)",
+        "🎯 3. Định Giá Gordon & Độ Nhạy",
     ])
 
     # =========================================================================
@@ -207,7 +207,7 @@ def render_valuation_gordon():
                     x=roe_range,
                     y=pb_fitted,
                     mode="lines",
-                    name="Đường Hồi Quy Ngành (OLS Baseline)",
+                    name="Đường OLS Ngành",
                     line=dict(color=pal["color_up"], width=2.5, dash="dot"),
                     hoverinfo="skip",
                 )
@@ -217,62 +217,88 @@ def render_valuation_gordon():
         fig.add_vline(
             x=med_roe, line_dash="dash", line_color=pal["color_brand"], line_width=1.5,
             annotation_text=f"Trung vị ROE: {med_roe:.1f}%", annotation_position="top left",
-            annotation=dict(font=dict(size=10, color=pal["color_brand"]), bgcolor=pal["bg_card"], borderpad=2)
+            annotation=dict(font=dict(size=11, color=pal["color_brand"]), bgcolor=pal["bg_card"], borderpad=3)
         )
         fig.add_hline(
             y=med_pb, line_dash="dash", line_color=pal["color_brand"], line_width=1.5,
             annotation_text=f"Trung vị P/B: {med_pb:.2f}x", annotation_position="bottom right",
-            annotation=dict(font=dict(size=10, color=pal["color_brand"]), bgcolor=pal["bg_card"], borderpad=2)
+            annotation=dict(font=dict(size=11, color=pal["color_brand"]), bgcolor=pal["bg_card"], borderpad=3)
         )
 
         # Chú thích 4 Góc phần tư dựa trên Trục X: ROE, Trục Y: P/B
         fig.add_annotation(
-            xref="paper", yref="paper", x=0.96, y=0.04,
+            xref="paper", yref="paper", x=0.985, y=0.02,
             text="<b>VÙNG CHIẾT KHẤU / BIÊN AN TOÀN</b><br>ROE cao nhưng P/B chiết khấu",
             showarrow=False, align="right",
             font=dict(size=11, color=pal["color_up"]),
-            bgcolor=pal["bg_card"], bordercolor=pal["color_up"], borderwidth=1, borderpad=6
+            bgcolor=pal["bg_card"], bordercolor=pal["color_up"], borderwidth=1, borderpad=5
         )
         fig.add_annotation(
-            xref="paper", yref="paper", x=0.96, y=0.96,
+            xref="paper", yref="paper", x=0.985, y=0.98,
             text="<b>VÙNG CHẤT LƯỢNG CAO (PREMIUM)</b><br>ROE cao tương xứng P/B cao",
             showarrow=False, align="right",
             font=dict(size=11, color=pal["accent_cyan"]),
-            bgcolor=pal["bg_card"], bordercolor=pal["accent_cyan"], borderwidth=1, borderpad=6
+            bgcolor=pal["bg_card"], bordercolor=pal["accent_cyan"], borderwidth=1, borderpad=5
         )
         fig.add_annotation(
-            xref="paper", yref="paper", x=0.04, y=0.04,
+            xref="paper", yref="paper", x=0.015, y=0.02,
             text="<b>VÙNG BẪY GIÁ RẺ (VALUE TRAPS)</b><br>P/B rẻ do năng lực sinh lời yếu",
             showarrow=False, align="left",
             font=dict(size=11, color=pal["color_warn"]),
-            bgcolor=pal["bg_card"], bordercolor=pal["color_warn"], borderwidth=1, borderpad=6
+            bgcolor=pal["bg_card"], bordercolor=pal["color_warn"], borderwidth=1, borderpad=5
         )
         fig.add_annotation(
-            xref="paper", yref="paper", x=0.04, y=0.96,
+            xref="paper", yref="paper", x=0.015, y=0.98,
             text="<b>VÙNG ĐỊNH GIÁ CAO / RỦI RO</b><br>ROE thấp nhưng P/B đắt đỏ",
             showarrow=False, align="left",
             font=dict(size=11, color=pal["color_down"]),
-            bgcolor=pal["bg_card"], bordercolor=pal["color_down"], borderwidth=1, borderpad=6
+            bgcolor=pal["bg_card"], bordercolor=pal["color_down"], borderwidth=1, borderpad=5
         )
 
+        # Xen kẽ vị trí nhãn để tránh chồng chữ ở các cụm ngân hàng gần nhau
+        pos_cycle = ["top center", "bottom center", "middle right", "middle left"]
+        sorted_idx = df_clean.sort_values(["roe_pct", "pb_ratio"]).index.tolist()
+        ticker_pos_map = {
+            df_clean.loc[idx, "ticker"]: pos_cycle[i % len(pos_cycle)]
+            for i, idx in enumerate(sorted_idx)
+        }
+
         fig.update_traces(
-            textposition="top center",
             textfont=dict(family="Segoe UI, Roboto, sans-serif", size=11, color=pal["text_heading"]),
             marker=dict(line=dict(width=1.5, color=pal["bg_card"]))
         )
-        fig = apply_plotly_theme(fig, height=620, title=f"Ma Trận Phân Tán P/B vs ROE Ngành Ngân Hàng ({selected_period})")
+        for tr in fig.data:
+            if getattr(tr, "text", None) is not None and len(tr.text) > 0:
+                tr.textposition = [ticker_pos_map.get(t, "top center") for t in tr.text]
+
+        roe_pad = max(2.0, (df_clean["roe_pct"].max() - df_clean["roe_pct"].min()) * 0.14)
+        pb_pad = max(0.25, (df_clean["pb_ratio"].max() - df_clean["pb_ratio"].min()) * 0.18)
         fig.update_layout(
             xaxis_title="Tỷ suất Sinh lời trên Vốn CSH (ROE %)",
             yaxis_title="Hệ số Định giá P/B (Trailing x)",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            xaxis_range=[df_clean["roe_pct"].min() - roe_pad, df_clean["roe_pct"].max() + roe_pad],
+            yaxis_range=[max(0.0, df_clean["pb_ratio"].min() - pb_pad), df_clean["pb_ratio"].max() + pb_pad],
+            legend=dict(
+                title_text="",
+                orientation="h",
+                yanchor="top",
+                y=-0.16,
+                xanchor="center",
+                x=0.5,
+                itemsizing="constant",
+            )
         )
+        fig = apply_plotly_theme(fig, height=640, title=f"Ma Trận Phân Tán P/B vs ROE Ngành Ngân Hàng ({selected_period})")
+        fig.update_layout(margin=dict(l=55, r=24, t=78, b=105))
 
         chart_event = st.plotly_chart(
-            fig, 
-            use_container_width=True, 
-            key="gordon_scatter_plot",
+            fig,
+            use_container_width=True,
+            key=f"gordon_scatter_plot_{pal['mode']}",
             on_select="rerun",
-            selection_mode="points"
+            selection_mode="points",
+            theme=None,
+            config=PLOTLY_CHART_CONFIG,
         )
 
         if chart_event:
@@ -325,7 +351,7 @@ def render_valuation_gordon():
             render_led_card("Hệ Số R² Mô Hình", f"{meta.get('r_squared', 0.2005)*100:.2f}%", "5 biến: ROE, NIM, NPL, CASA, CIR", badge="HỒI QUY POOLED OLS", status="cyan")
         with m_col2:
             n_obs = meta.get("total_observations") or meta.get("n_observations") or 872
-            render_led_card("Mẫu Dữ Liệu Nghiên Cứu", f"{n_obs:,} quý", "2018Q1 – 2026Q3 (Clustered SE)", badge="DUNG LƯỢNG MẪU", status="purple")
+            render_led_card("Cỡ Mẫu Nghiên Cứu", f"{n_obs:,} quý", "2018Q1–2026Q3 (Clustered)", badge="MẪU PANEL", status="purple")
         with m_col3:
             render_led_card("Chênh Lệch 2 Quý (T+2Q)", f"{spread_val.get('forward_2q_spread_pct', 4.55):+.2f}%", f"p = {spread_val.get('forward_2q_pvalue', 0.0931):.4f}", badge="HỘI TỤ GIÁ TRỊ", status="gold")
         with m_col4:
@@ -493,6 +519,11 @@ def render_valuation_gordon():
             opacity=0.85,
             hovertemplate="<b>%{y}</b><br>P/B Hợp lý Gordon: <b>%{x:.2f}x</b><extra></extra>"
         ))
-        fig_int = apply_plotly_theme(fig_int, height=640, title=f"Đối Chiếu P/B Thị Trường vs P/B Hợp Lý Gordon (g={g_input*100:.1f}%, Ke={ke_input*100:.1f}%)")
-        fig_int.update_layout(barmode="group", xaxis_title="Hệ số P/B (lần)", legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-        st.plotly_chart(fig_int, use_container_width=True)
+        fig_int.update_layout(
+            barmode="group",
+            xaxis_title="Hệ số P/B (lần)",
+            legend=dict(orientation="h", yanchor="top", y=-0.12, xanchor="center", x=0.5),
+        )
+        fig_int = apply_plotly_theme(fig_int, height=650, title=f"Đối Chiếu P/B Thị Trường vs P/B Hợp Lý Gordon (g={g_input*100:.1f}%, Ke={ke_input*100:.1f}%)")
+        fig_int.update_layout(margin=dict(b=90))
+        st.plotly_chart(fig_int, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"gordon_bar_intrinsic_{pal['mode']}")

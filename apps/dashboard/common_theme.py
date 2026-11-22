@@ -37,9 +37,12 @@ Bảng màu tham chiếu chính xác theo mẫu thiết kế chuyên nghiệp (c
 ===================================================================================
 """
 
+import textwrap
 from typing import Dict, Any
 import plotly.graph_objects as go
 import streamlit as st
+
+PLOTLY_CHART_CONFIG = {"displayModeBar": False}
 
 # FONT CHỮ TOÀN HỆ THỐNG: SEGOE UI CHUẨN XÁC, KHÔNG LỖI TIẾNG VIỆT
 FONT_FAMILY = "'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif"
@@ -220,7 +223,13 @@ def apply_global_theme():
     tag_color = "#1D4ED8" if is_light else "#93C5FD"
     
     expander_hover_bg = "#EFF6FF" if is_light else "rgba(59, 130, 246, 0.15)"
-    dataframe_filter = "filter: none !important;"
+    # Glide Data Grid renders on <canvas> using Streamlit's base="dark" config palette;
+    # in Light Mode, invert + hue-rotate turns the dark table surface into a crisp light table.
+    dataframe_filter = (
+        "filter: invert(0.95) hue-rotate(180deg) saturate(1.12) contrast(1.04) !important;"
+        if is_light else
+        "filter: none !important;"
+    )
 
     # Cấu hình Segmented Control Tabs (Nút bấm chuyển tab nổi 3D)
     tab_list_bg = "#F1F5F9" if is_light else "rgba(15, 23, 42, 0.75)"
@@ -314,36 +323,66 @@ def apply_global_theme():
             text-rendering: optimizeLegibility;
         }}
 
-        .stApp {{
+        html, body, .stApp, [data-testid="stApp"],
+        [data-testid="stAppViewContainer"],
+        [data-testid="stAppViewContainer"] > .main,
+        [data-testid="stMain"], .stMain,
+        [data-testid="stBottom"], [data-testid="stBottomBlockContainer"] {{
+            background: var(--bg-app) !important;
             background-color: var(--bg-app) !important;
             color: var(--text-body) !important;
             transition: background-color 0.25s ease, color 0.25s ease;
         }}
 
         /* STREAMLIT TOP HEADER */
-        header[data-testid="stHeader"] {{
+        header[data-testid="stHeader"],
+        [data-testid="stHeader"],
+        .stAppHeader {{
+            background: var(--bg-app) !important;
             background-color: var(--bg-app) !important;
             border-bottom: 1px solid var(--border-color) !important;
             height: 3.75rem !important;
             z-index: 99 !important;
+            color: var(--text-heading) !important;
+        }}
+
+        [data-testid="stHeader"] button,
+        [data-testid="stHeader"] svg,
+        [data-testid="stToolbar"] button,
+        [data-testid="stToolbar"] svg,
+        [data-testid="stSidebarCollapseButton"],
+        [data-testid="stSidebarCollapseButton"] *,
+        [data-testid="stSidebarCollapseButton"] span,
+        [data-testid="stSidebarCollapseButton"] svg,
+        [data-testid="stExpandSidebarButton"],
+        [data-testid="stExpandSidebarButton"] *,
+        [data-testid="stExpandSidebarButton"] span,
+        [data-testid="stExpandSidebarButton"] svg {{
+            color: var(--text-heading) !important;
+            fill: var(--text-heading) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }}
 
         /* ẨN NÚT DEPLOY CỦA STREAMLIT COMMUNITY CLOUD TRÊN HỆ THỐNG NỘI BỘ */
         .stDeployButton,
-        [data-testid="stDeployButton"] {{
+        [data-testid="stDeployButton"],
+        .stAppDeployButton,
+        [data-testid="stAppDeployButton"] {{
             display: none !important;
         }}
 
         footer {{visibility: hidden;}}
 
-        .block-container {{
-            padding-top: 5.0rem !important;
+        .block-container,
+        [data-testid="stMainBlockContainer"] {{
+            padding-top: 4.5rem !important;
             padding-bottom: 2.5rem !important;
-            padding-left: 2rem !important;
-            padding-right: 2rem !important;
+            padding-left: 1.75rem !important;
+            padding-right: 1.75rem !important;
         }}
 
-        /* 3. SIDEBAR TOÀN DIỆN: ĐỒNG BỘ 100% NỀN CẢ LIGHT VÀ DARK MODE, KHÔNG BỊ TRẮNG */
+        /* 3. SIDEBAR TOÀN DIỆN: ĐỒNG BỘ 100% NỀN CẢ LIGHT VÀ DARK MODE, KHÔNG ĐÈ NỘI DUNG */
         section[data-testid="stSidebar"],
         [data-testid="stSidebar"],
         [data-testid="stSidebarContent"],
@@ -358,17 +397,15 @@ def apply_global_theme():
         section[data-testid="stSidebar"] {{
             border-right: 1px solid var(--border-color) !important;
             box-shadow: 4px 0 24px var(--shadow-color) !important;
-            min-width: 300px !important;
-            max-width: 350px !important;
-            width: 325px !important;
         }}
 
-        section[data-testid="stSidebar"] > div:first-child {{
-            width: 325px !important;
-            min-width: 300px !important;
+        section[data-testid="stSidebar"][data-collapsed="false"] {{
+            min-width: 260px;
+            max-width: 320px;
         }}
 
         /* KHI SIDEBAR ĐÓNG: CHO PHÉP THU GỌN HOÀN TOÀN VỀ 0, KHÔNG ĐỂ LẠI KHOẢNG TRẮNG */
+        section[data-testid="stSidebar"][data-collapsed="true"],
         section[data-testid="stSidebar"][aria-expanded="false"] {{
             min-width: 0 !important;
             width: 0 !important;
@@ -392,16 +429,32 @@ def apply_global_theme():
         }}
 
         /* 4. TYPOGRAPHY TIÊU ĐỀ & NỘI DUNG */
-        h1, h2, h3, h4, h5, h6 {{
+        h1, h2, h3, h4, h5, h6,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4,
+        [data-testid="stMarkdownContainer"] h5,
+        [data-testid="stMarkdownContainer"] h6,
+        [data-testid="stHeadingWithActionElements"] * {{
             color: var(--text-heading) !important;
             font-weight: 700 !important;
             letter-spacing: -0.3px;
         }}
 
-        .stApp p, .stApp label, .stMarkdown, .stText {{
+        .stApp p, .stApp label, .stMarkdown, .stText,
+        [data-testid="stMain"] p, [data-testid="stMain"] li,
+        [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {{
             color: var(--text-body);
             line-height: 1.68 !important;
             font-size: 13.5px;
+        }}
+
+        [data-testid="stCheckbox"] label,
+        [data-testid="stCheckbox"] p,
+        [data-testid="stToggle"] label,
+        [data-testid="stToggle"] p {{
+            color: var(--text-heading) !important;
         }}
 
         /* ĐỊNH DẠNG CÔNG THỨC TOÁN HỌC (KATEX & CODE SPAN) */
@@ -453,9 +506,18 @@ def apply_global_theme():
         }}
 
         /* 6. NÚT BẤM (BUTTONS) */
-        .stButton > button {{
-            background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-led) 100%) !important;
+        .stButton > button,
+        .stButton > button p,
+        .stButton > button span,
+        [data-testid="stBaseButton-primary"],
+        [data-testid="stBaseButton-primary"] p,
+        [data-testid="stBaseButton-primary"] span {{
             color: #FFFFFF !important;
+        }}
+
+        .stButton > button,
+        [data-testid="stBaseButton-primary"] {{
+            background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-led) 100%) !important;
             font-weight: 700 !important;
             border-radius: 10px !important;
             border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -471,7 +533,8 @@ def apply_global_theme():
             min-width: 0 !important;
         }}
 
-        .stButton > button:hover {{
+        .stButton > button:hover,
+        [data-testid="stBaseButton-primary"]:hover {{
             background: linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-led) 100%) !important;
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
             transform: translateY(-1px);
@@ -479,15 +542,33 @@ def apply_global_theme():
             border-color: rgba(255, 255, 255, 0.3) !important;
         }}
 
-        .stButton > button[kind="secondary"] {{
+        .stButton > button[kind="secondary"],
+        .stButton > button[kind="secondary"] p,
+        .stButton > button[kind="secondary"] span,
+        [data-testid="stBaseButton-secondary"],
+        [data-testid="stBaseButton-secondary"] p,
+        [data-testid="stBaseButton-secondary"] span {{
+            color: var(--text-heading) !important;
+        }}
+
+        .stButton > button[kind="secondary"],
+        [data-testid="stBaseButton-secondary"] {{
             background: var(--bg-card) !important;
-            color: var(--text-muted) !important;
             border: 1px solid var(--border-color) !important;
             box-shadow: none !important;
         }}
 
-        .stButton > button[kind="secondary"]:hover {{
+        .stButton > button[kind="secondary"]:hover,
+        .stButton > button[kind="secondary"]:hover p,
+        .stButton > button[kind="secondary"]:hover span,
+        [data-testid="stBaseButton-secondary"]:hover,
+        [data-testid="stBaseButton-secondary"]:hover p,
+        [data-testid="stBaseButton-secondary"]:hover span {{
             color: {sec_btn_hover_color} !important;
+        }}
+
+        .stButton > button[kind="secondary"]:hover,
+        [data-testid="stBaseButton-secondary"]:hover {{
             border-color: var(--color-brand-led) !important;
             background: {sec_btn_hover_bg} !important;
         }}
@@ -625,7 +706,7 @@ def apply_global_theme():
             content: "●";
             position: absolute;
             right: 12px;
-            font-size: 9px;
+            font-size: 11px;
             color: {nav_active_border};
             filter: drop-shadow(0 0 5px {nav_active_border});
             animation: pulseGlow 1.8s infinite;
@@ -664,6 +745,13 @@ def apply_global_theme():
 
         div[data-baseweb="slider"] div[data-testid="stSliderTickBar"] {{
             background: var(--color-brand) !important;
+        }}
+
+        [data-testid="stSlider"] div,
+        [data-testid="stSlider"] p,
+        [data-testid="stSliderTickBarMin"],
+        [data-testid="stSliderTickBarMax"] {{
+            color: var(--text-body) !important;
         }}
 
         /* 9. INPUTS, SELECTBOX, MULTISELECT, SEARCH & DROPDOWNS (STREAMLIT 1.66 EMOTION + BASEWEB) */
@@ -857,12 +945,12 @@ def apply_global_theme():
             margin-bottom: 16px !important;
             width: 100% !important;
         }}
-        /* Khung viền bọc hàng nút Tabs (100% width, không rớt dòng) */
+        /* Khung viền bọc hàng nút Tabs (tự động co giãn & xuống dòng gọn gàng nếu hẹp, không bị cắt chữ) */
         div[data-testid="stTabs"] div[role="tablist"],
         div[data-baseweb="tab-list"] {{
             display: flex !important;
-            flex-wrap: nowrap !important;
-            gap: 6px !important;
+            flex-wrap: wrap !important;
+            gap: 4px !important;
             background: {tab_list_bg} !important;
             border: 1px solid {tab_list_border} !important;
             border-radius: 10px !important;
@@ -871,7 +959,7 @@ def apply_global_theme():
             max-width: 100% !important;
             box-shadow: 0 1px 3px var(--shadow-color) !important;
             align-items: center !important;
-            overflow-x: auto !important;
+            overflow-x: visible !important;
             scrollbar-width: none !important;
         }}
         div[data-testid="stTabs"] div[role="tablist"]::-webkit-scrollbar,
@@ -888,8 +976,8 @@ def apply_global_theme():
             border-radius: 7px !important;
             color: {tab_btn_color} !important;
             font-weight: 600 !important;
-            font-size: 13px !important;
-            padding: 8px 16px !important;
+            font-size: 12.5px !important;
+            padding: 7px 12px !important;
             cursor: pointer !important;
             box-shadow: none !important;
             transition: all 0.18s ease !important;
@@ -972,6 +1060,13 @@ def apply_global_theme():
         }}
 
         /* KHUNG ĐỒ THỊ CHUẨN TƯƠNG TÁC WORKSTATION */
+        div[data-testid="stPlotlyChart"],
+        div[data-testid="stPlotlyChart"] > div {{
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }}
         div[data-testid="stPlotlyChart"] {{
             border: 1px solid var(--border-color) !important;
             border-radius: 12px !important;
@@ -996,15 +1091,59 @@ def apply_global_theme():
         }}
 
         /* THÔNG BÁO ALERTS */
-        div[data-testid="stAlert"] {{
+        div[data-testid="stAlert"],
+        div[data-testid="stAlertContainer"],
+        div[role="alert"] {{
             background-color: var(--bg-card) !important;
             border: 1px solid var(--border-color) !important;
             border-radius: 10px !important;
             box-shadow: 0 2px 8px var(--shadow-color) !important;
+            color: var(--text-body) !important;
         }}
-        div[data-testid="stAlert"] p {{
+        div[data-testid="stAlert"] p,
+        div[data-testid="stAlertContainer"] p,
+        div[role="alert"] p {{
             color: var(--text-body) !important;
             font-size: 13px !important;
+        }}
+
+        /* ĐỒNG BỘ CHIỀU CAO BẰNG NHAU CHO CÁC THẺ KPI (LED CARDS) */
+        [data-testid="stHorizontalBlock"]:has(.led-card) {{
+            align-items: stretch !important;
+            margin-bottom: 14px !important;
+        }}
+        [data-testid="stHorizontalBlock"]:has(.led-card) > [data-testid="stColumn"] {{
+            display: flex !important;
+            flex-direction: column !important;
+        }}
+        [data-testid="stColumn"]:has(.led-card) > div,
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stVerticalBlockBorderWrapper"],
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stVerticalBlockBorderWrapper"] > div,
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stVerticalBlock"],
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stElementContainer"]:has(.led-card),
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stMarkdown"]:has(.led-card),
+        [data-testid="stColumn"]:has(.led-card) [data-testid="stMarkdownContainer"]:has(.led-card) {{
+            flex: 1 1 auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+        }}
+        .led-card {{
+            flex: 1 1 auto !important;
+            height: 100% !important;
+            min-height: 158px !important;
+            margin-bottom: 0 !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+        }}
+        [data-testid="stElementContainer"]:has([data-vq-theme]),
+        [data-testid="stHtml"]:has([data-vq-theme]) {{
+            display: none !important;
+            height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }}
 
         /* POPOVER NÚT GIAO DIỆN & POPUP NỘI DUNG */
@@ -1093,11 +1232,19 @@ def apply_global_theme():
             border-radius: 10px !important;
             border: 1px solid var(--border-color) !important;
             box-shadow: 0 2px 8px var(--shadow-color) !important;
+            overflow: hidden !important;
             {dataframe_filter}
         }}
     </style>
     """
-    st.markdown(css, unsafe_allow_html=True)
+    clean_css = textwrap.dedent(css).strip()
+    # Prepend a zero-height hidden theme marker so st.html mounts in the persistent main
+    # delta tree instead of Streamlit's ephemeral _event_dg (which drops <style> on reruns).
+    marker = f'<div data-vq-theme="{pal["mode"]}" style="display:none !important;height:0;margin:0;padding:0;"></div>'
+    if hasattr(st, "html"):
+        st.html(f"{marker}\n{clean_css}")
+    else:
+        st.markdown(clean_css, unsafe_allow_html=True)
 
 
 def render_hero_banner(title: str, subtitle: str, icon: str = ""):
@@ -1137,19 +1284,19 @@ def render_top_theme_switcher():
 def apply_plotly_theme(fig: go.Figure, height: int = 420, title: str = None) -> go.Figure:
     """
     Chuẩn hóa giao diện Plotly Charts thích ứng động Light / Dark Mode với độ tương phản cao:
-    - Text trục (tickfont): Đen đậm #0F172A (Light) / Bạc sáng #CBD5E1 (Dark), size 12
-    - Tiêu đề trục (title_font): Đen đậm #0F172A (Light) / Trắng #F8FAFC (Dark), size 13
-    - Legend: Font rõ nét size 12
-    - Tự động áp dụng cho tất cả trục X, Y và Y2 (Secondary Y)
+    - Ép template 'plotly_white' / 'plotly_dark' để tránh Streamlit Dark config ghi đè trục/chú giải.
+    - Text trục (tickfont) và tiêu đề trục (title_font), legend, colorbar đều tương phản rõ nét.
     """
     pal = get_theme_palette()
-    
+    is_light = (pal["mode"] == "LIGHT")
+
     fig.update_layout(
+        template="plotly_white" if is_light else "plotly_dark",
         paper_bgcolor=pal["bg_card"],
         plot_bgcolor=pal["plot_bg"],
         font=dict(color=pal["chart_tick"], family="Segoe UI, Roboto, Helvetica, Arial, sans-serif", size=12),
         height=height,
-        margin=dict(l=55, r=40, t=65 if title else 35, b=55),
+        margin=dict(l=55, r=32, t=78 if title else 36, b=70),
         hoverlabel=dict(
             namelength=-1,
             bgcolor=pal["bg_card"],
@@ -1160,8 +1307,13 @@ def apply_plotly_theme(fig: go.Figure, height: int = 420, title: str = None) -> 
             bgcolor=pal["bg_card_glass"],
             bordercolor=pal["border_color"],
             borderwidth=1,
-            font=dict(color=pal["chart_tick"], size=12, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif")
-        )
+            font=dict(color=pal["chart_tick"], size=12, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+            title=dict(font=dict(color=pal["chart_title"], size=12.5, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif")),
+        ),
+        coloraxis_colorbar=dict(
+            title=dict(font=dict(color=pal["chart_title"], size=12, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif")),
+            tickfont=dict(color=pal["chart_tick"], size=11.5, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+        ),
     )
     fig.update_xaxes(
         showgrid=True,
@@ -1169,7 +1321,7 @@ def apply_plotly_theme(fig: go.Figure, height: int = 420, title: str = None) -> 
         gridwidth=1,
         zerolinecolor=pal["border_color"],
         tickfont=dict(color=pal["chart_tick"], size=12, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
-        title_font=dict(color=pal["chart_title"], size=13, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif")
+        title_font=dict(color=pal["chart_title"], size=13, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
     )
     fig.update_yaxes(
         showgrid=True,
@@ -1177,16 +1329,32 @@ def apply_plotly_theme(fig: go.Figure, height: int = 420, title: str = None) -> 
         gridwidth=1,
         zerolinecolor=pal["border_color"],
         tickfont=dict(color=pal["chart_tick"], size=12, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
-        title_font=dict(color=pal["chart_title"], size=13, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif")
+        title_font=dict(color=pal["chart_title"], size=13, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
     )
+    for trace in fig.data:
+        if hasattr(trace, "colorbar") and getattr(trace, "colorbar", None) is not None:
+            trace.update(
+                colorbar=dict(
+                    title=dict(font=dict(color=pal["chart_title"], size=12)),
+                    tickfont=dict(color=pal["chart_tick"], size=11.5),
+                )
+            )
+    if getattr(fig.layout, "polar", None) is not None and len(fig.layout.polar.to_plotly_json()) > 0:
+        fig.update_layout(
+            polar=dict(
+                bgcolor="rgba(0,0,0,0)",
+                radialaxis=dict(gridcolor=pal["grid_color"], tickfont=dict(color=pal["chart_tick"], size=11)),
+                angularaxis=dict(gridcolor=pal["grid_color"], tickfont=dict(color=pal["chart_title"], size=12)),
+            )
+        )
     if title:
         fig.update_layout(
             title=dict(
                 text=f"<b>{title}</b>",
-                font=dict(color=pal["chart_title"], size=15, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
-                x=0.03,
+                font=dict(color=pal["chart_title"], size=14.5, family="Segoe UI, Roboto, Helvetica, Arial, sans-serif"),
+                x=0.02,
                 xanchor="left",
-                y=0.98,
+                y=0.97,
                 yanchor="top"
             )
         )
@@ -1410,18 +1578,18 @@ def render_led_card(title: str, value: str, subtext: str = "", badge: str = "", 
         }
 
     st_cfg = card_styles.get(status, card_styles["cyan"])
-    badge_html = f'<span style="background-color: {st_cfg["badge_bg"]}; color: {st_cfg["badge_color"]}; padding: 3px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 700; border: 1px solid {st_cfg["badge_border"]}; letter-spacing: 0.5px;">{badge}</span>' if badge else ""
+    badge_html = f'<span style="background-color: {st_cfg["badge_bg"]}; color: {st_cfg["badge_color"]}; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; border: 1px solid {st_cfg["badge_border"]}; letter-spacing: 0.4px; white-space: nowrap; flex-shrink: 0;">{badge}</span>' if badge else ""
 
     card_html = (
-        f'<div style="background: {st_cfg["bg"]}; border-radius: 12px; padding: 18px 20px; '
+        f'<div class="led-card" style="background: {st_cfg["bg"]}; border-radius: 12px; padding: 15px 16px; '
         f'border: 1px solid {st_cfg["border"]}; box-shadow: 0 6px 20px {pal["shadow_color"]}; '
-        f'margin-bottom: 14px; border-top: 3.5px solid {st_cfg["top"]}; transition: all 0.2s ease;">'
-        f'<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">'
-        f'<span style="color: {pal["text_muted"]}; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">{title}</span>'
+        f'border-top: 3.5px solid {st_cfg["top"]}; transition: all 0.2s ease;">'
+        f'<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 4px 6px; margin-bottom: 8px;">'
+        f'<span style="color: {pal["text_muted"]}; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; line-height: 1.3;">{title}</span>'
         f'{badge_html}'
         f'</div>'
-        f'<div style="color: {st_cfg["val_color"]}; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.25;">{value}</div>'
-        f'<div style="color: {pal["text_muted"]}; font-size: 13px; line-height: 1.6;">{subtext}</div>'
+        f'<div style="color: {st_cfg["val_color"]}; font-size: clamp(20px, 1.8vw, 25px); font-weight: 800; letter-spacing: -0.4px; margin-bottom: 6px; line-height: 1.25;">{value}</div>'
+        f'<div style="color: {pal["text_muted"]}; font-size: 12.5px; line-height: 1.55;">{subtext}</div>'
         f'</div>'
     )
     st.markdown(card_html, unsafe_allow_html=True)

@@ -34,9 +34,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# 2. ÁP DỤNG BỘ CSS THEME TOÀN CỤC CHUẨN LED NEON (HỖ TRỢ LIGHT / DARK MODE)
-apply_global_theme()
-
 # Nhập 5 Phân hệ nghiên cứu chuẩn hóa theo cấu trúc mới
 from dashboard.modules.mod0_overview import render_overview
 from dashboard.modules.mod1_valuation_gordon import render_valuation_gordon
@@ -46,6 +43,8 @@ from dashboard.modules.mod4_research_evidence import render_research_evidence
 
 
 def main():
+    # 2. ÁP DỤNG BỘ CSS THEME TOÀN CỤC MỖI LẦN RERUN (HỖ TRỢ LIGHT / DARK MODE)
+    apply_global_theme()
     pal = get_theme_palette()
 
     # KHỞI TẠO VÀ BẢO TOÀN TRẠNG THÁI TOÀN CỤC (GLOBAL PERSISTENT STATE)
@@ -62,7 +61,7 @@ def main():
                     <div style="width: 32px; height: 32px; background: linear-gradient(135deg, {pal['color_brand']} 0%, {pal['color_brand_led']} 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #FFFFFF; font-size: 13px; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);">VQ</div>
                     <div>
                         <div style="font-size: 13px; font-weight: 800; color: {pal['text_heading']}; letter-spacing: -0.2px; line-height: 1.15;">VIETNAM BANKING QUANT</div>
-                        <div style="font-size: 9.5px; font-weight: 700; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 0.8px;">Trạm Nghiên Cứu Định Lượng</div>
+                        <div style="font-size: 11px; font-weight: 700; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 0.5px;">Trạm Nghiên Cứu Định Lượng</div>
                     </div>
                 </div>
             </div>
@@ -121,21 +120,22 @@ def main():
     active_bank = st.session_state.get("selected_ticker", "VCB")
     clean_choice_name = choice
     st.markdown(f"""
-        <div style='display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: {pal['text_muted']}; margin-bottom: 14px; padding: 6px 12px; background: {pal['bg_card']}; border-radius: 6px; border: 1px solid {pal['border_color']};'>
-            <div style='display: flex; align-items: center; gap: 8px;'>
+        <div style='display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: {pal['text_muted']}; margin-bottom: 14px; padding: 8px 14px; background: {pal['bg_card']}; border-radius: 6px; border: 1px solid {pal['border_color']};'>
+            <div style='display: flex; align-items: center; gap: 8px; white-space: nowrap;'>
                 <span style='color: {pal['text_muted']}; font-weight: 600;'>TRẠM NGHIÊN CỨU</span>
                 <span>/</span>
                 <span style='color: {pal['text_heading']}; font-weight: 700;'>{clean_choice_name}</span>
             </div>
-            <div style='display: flex; align-items: center; gap: 8px;'>
-                <span style='font-size: 11px; color: {pal['text_muted']};'>NGÂN HÀNG MỤC TIÊU:</span>
-                <span style='background: rgba(37, 99, 235, 0.12); border: 1px solid {pal["color_brand_led"]}; color: {pal["color_brand_led"]}; padding: 1px 8px; border-radius: 4px; font-weight: 800; font-size: 11px;'>{active_bank}</span>
-                <span style='background: rgba(16, 185, 129, 0.12); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.25); padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 800; display: inline-flex; align-items: center;'><span style='display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981; margin-right: 5px; animation: pulseGlow 1.8s infinite;'></span>{ds_label.upper()}</span>
+            <div style='display: flex; flex-wrap: wrap; align-items: center; gap: 8px;'>
+                <span style='font-size: 11.5px; color: {pal['text_muted']};'>NGÂN HÀNG MỤC TIÊU:</span>
+                <span style='background: rgba(37, 99, 235, 0.12); border: 1px solid {pal["color_brand_led"]}; color: {pal["color_brand_led"]}; padding: 2px 8px; border-radius: 4px; font-weight: 800; font-size: 11.5px;'>{active_bank}</span>
+                <span style='background: rgba(16, 185, 129, 0.12); color: #059669; border: 1px solid rgba(16, 185, 129, 0.30); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; white-space: nowrap;'><span style='display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #10B981; margin-right: 5px; animation: pulseGlow 1.8s infinite;'></span>{ds_label.upper()}</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
     if guided_mode:
+        guide_bg = "#EFF6FF" if pal["mode"] == "LIGHT" else "rgba(37, 99, 235, 0.14)"
         guide_map = {
             menu_options[0]: "💡 <b>Gợi ý đọc nhanh (Bước 1/5):</b> Xem bức tranh 27 ngân hàng đang niêm yết, phân nhóm quy mô (Big4 nhà nước vs TMCP tư nhân) và chất lượng độ phủ dữ liệu.",
             menu_options[1]: "💡 <b>Gợi ý đọc nhanh (Bước 2/5):</b> Tìm ngân hàng <b>'Rẻ + Khỏe'</b> — nằm bên phải (ROE sinh lời cao) nhưng phía dưới đường định giá trung bình (P/B thấp). Nhấn vào điểm trên biểu đồ để chọn mã soi tiếp ở Bước 3.",
@@ -144,7 +144,7 @@ def main():
             menu_options[4]: "💡 <b>Gợi ý đọc nhanh (Bước 5/5):</b> Kiểm chứng các giả thuyết đầu tư bằng thống kê thực nghiệm (Granger Lead-Lag, Hồi quy Phần dư OLS, Event Study cổ tức có hiệu chỉnh FDR).",
         }
         st.markdown(
-            f"<div style='background: rgba(37, 99, 235, 0.08); border: 1px solid {pal['border_color']}; border-left: 4px solid {pal['color_brand_led']}; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: {pal['text_body']};'>{guide_map.get(choice, '')}</div>",
+            f"<div style='background: {guide_bg}; border: 1px solid {pal['border_color']}; border-left: 4px solid {pal['color_brand_led']}; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; color: {pal['text_body']};'>{guide_map.get(choice, '')}</div>",
             unsafe_allow_html=True,
         )
 

@@ -21,6 +21,7 @@ from dashboard.common_theme import (
     get_theme_palette,
     apply_plotly_theme,
     render_led_card,
+    PLOTLY_CHART_CONFIG,
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -47,12 +48,12 @@ def render_research_evidence():
 
     st.html(f"""
         <div style="background: {pal['bg_card']}; border: 1px solid {pal['border_color']}; border-left: 5px solid {pal['color_brand_led']}; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 2px 10px {pal['shadow_color']};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <div style="font-size: 12px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1.2px;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 6px;">
+                <div style="font-size: 11.5px; font-weight: 800; color: {pal['color_brand_led']}; text-transform: uppercase; letter-spacing: 1px;">
                     🔬 PHÂN HỆ 05 • TRUNG TÂM BẰNG CHỨNG ĐỊNH LƯỢNG
                 </div>
-                <span style="background: rgba(16, 185, 129, 0.1); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11.5px; font-weight: 800; padding: 3px 10px; border-radius: 4px;">
-                    KIỂM TOÁN THỰC NGHIỆM (UNSCRAMBLED DATA)
+                <span style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11px; font-weight: 800; padding: 3px 10px; border-radius: 4px; white-space: nowrap;">
+                    KIỂM TOÁN THỰC NGHIỆM
                 </span>
             </div>
             <div style="font-size: 18px; font-weight: 800; color: {pal['text_heading']}; margin-top: 2px;">
@@ -65,9 +66,9 @@ def render_research_evidence():
     """)
 
     tab_card1, tab_card2, tab_card3 = st.tabs([
-        "1. Đồng Pha & Dẫn Dắt (Co-movement)",
-        "2. Hồi Quy Phần Dư P/B - ROE (OLS)",
-        "3. Sự Kiện Cổ Tức & FDR B-H",
+        "1. Đồng Pha (Co-movement)",
+        "2. Hồi Quy OLS",
+        "3. Sự Kiện & FDR B-H",
     ])
 
     # =========================================================================
@@ -83,7 +84,7 @@ def render_research_evidence():
         with c1:
             render_led_card("Tương Quan Ngành TB (Lag 0)", f"{cm_meta.get('avg_sector_corr', 0.408):.3f}", f"{cm_meta.get('banks_count', 13)} NH chủ chốt (250 phiên)", badge="ĐỒNG PHA CÙNG PHIÊN", status="mint")
         with c2:
-            render_led_card("Cặp Đồng Pha Mạnh Nhất", top_pair_str, "Phản ánh chung yếu tố ngành/vĩ mô", badge="TOP CORRELATION", status="cyan")
+            render_led_card("Cặp Đồng Pha Mạnh Nhất", top_pair_str, "Đồng pha ngành & vĩ mô", badge="TOP CORRELATION", status="cyan")
         with c3:
             render_led_card("Chiến Lược Lướt Sóng T+1", "BÁC BỎ H1", "Không thắng nổi phí 15 bps/lượt", badge="KẾT LUẬN THỰC NGHIỆM", status="red")
 
@@ -99,8 +100,8 @@ def render_research_evidence():
                 aspect="auto",
                 height=500,
             )
-            fig_cm = apply_plotly_theme(fig_cm, height=500, title="Ma Trận Tương Quan Lợi Suất Ngày (Lag 0) — Dữ Liệu Đã Khóa Chuẩn bank_sk")
-            st.plotly_chart(fig_cm, use_container_width=True)
+            fig_cm = apply_plotly_theme(fig_cm, height=500, title="Ma Trận Tương Quan Lợi Suất Ngày (Lag 0)")
+            st.plotly_chart(fig_cm, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"ev_comovement_{pal['mode']}")
 
         if top_pairs:
             st.markdown("##### Top Cặp Ngân Hàng Biến Động Đồng Pha Nhất")
@@ -121,7 +122,7 @@ def render_research_evidence():
         with r2:
             render_led_card("Cỡ Mẫu Quan Sát", f"{v_meta.get('n_observations', 872):,} quý", f"Kỳ mới nhất: {v_meta.get('latest_quarter', '2026Q3')}", badge="PANEL DATA", status="purple")
         with r3:
-            render_led_card("Biến Giải Thích Mạnh Nhất (ROE)", f"β = {roe_c.get('coef', 2.2225):+.2f}", f"Clustered p = {roe_c.get('p_value', 0.0008):.4f}", badge="CÓ Ý NGHĨA 1%", status="mint")
+            render_led_card("Biến Mạnh Nhất (ROE)", f"β = {roe_c.get('coef', 2.2225):+.2f}", f"Clustered p = {roe_c.get('p_value', 0.0008):.4f}", badge="CÓ Ý NGHĨA 1%", status="mint")
 
         st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
@@ -174,17 +175,17 @@ def render_research_evidence():
 
         if win_rows:
             df_w = pd.DataFrame(win_rows)
-            df_w["Kết luận FDR 5%"] = df_w["significant_fdr_5pct"].map(lambda x: "✅ Có ý nghĩa (p_fdr < 0.05)" if x else "➖ Chưa đủ ý nghĩa")
+            df_w["Kết Luận FDR"] = df_w["significant_fdr_5pct"].map(lambda x: "✅ Có ý nghĩa (<5%)" if x else "➖ Chưa đủ")
             st.dataframe(
-                df_w[["event_type", "window", "n_events", "mean_car_pct", "t_stat", "p_value_raw", "p_value_fdr_bh", "Kết luận FDR 5%"]].rename(
+                df_w[["event_type", "window", "n_events", "mean_car_pct", "t_stat", "p_value_raw", "p_value_fdr_bh", "Kết Luận FDR"]].rename(
                     columns={
-                        "event_type": "Loại Cổ Tức",
-                        "window": "Cửa Sổ Sự Kiện",
-                        "n_events": "Số Sự Kiện",
+                        "event_type": "Loại",
+                        "window": "Cửa Sổ",
+                        "n_events": "Số Đợt",
                         "mean_car_pct": "CAAR (%)",
                         "t_stat": "t-stat",
-                        "p_value_raw": "p-value (Raw)",
-                        "p_value_fdr_bh": "p-value (FDR-BH)",
+                        "p_value_raw": "p (Raw)",
+                        "p_value_fdr_bh": "p (FDR-BH)",
                     }
                 ),
                 use_container_width=True,
@@ -199,6 +200,11 @@ def render_research_evidence():
             if car_curves.get("CASH"):
                 fig_ev.add_trace(go.Scatter(x=x_days, y=car_curves["CASH"], mode="lines+markers", name="Cổ Tức Tiền Mặt (CAAR %)", line=dict(color=pal["accent_pink"], width=2.5, dash="dash")))
             fig_ev.add_vline(x=0, line_dash="dot", line_color=pal["color_warn"], annotation_text="t=0 (GDKHQ)")
-            fig_ev = apply_plotly_theme(fig_ev, height=360, title="Đường Cong Lợi Suất Bất Thường Tích Lũy (CAAR %) Quanh Ngày GDKHQ")
-            fig_ev.update_layout(xaxis_title="Số phiên so với ngày sự kiện", yaxis_title="CAAR (%)")
-            st.plotly_chart(fig_ev, use_container_width=True)
+            fig_ev.update_layout(
+                xaxis_title="Số phiên so với ngày sự kiện",
+                yaxis_title="CAAR (%)",
+                legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5),
+            )
+            fig_ev = apply_plotly_theme(fig_ev, height=400, title="Đường Cong Lợi Suất Bất Thường Tích Lũy (CAAR %) Quanh GDKHQ")
+            fig_ev.update_layout(margin=dict(b=95))
+            st.plotly_chart(fig_ev, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"ev_caar_{pal['mode']}")

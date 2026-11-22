@@ -37,7 +37,7 @@ from dashboard.services.query_service import (
     get_real_bctc_pdfs,
 )
 from dashboard.common_theme import (
-    apply_plotly_theme, render_led_card, get_theme_palette,
+    apply_plotly_theme, render_led_card, get_theme_palette, PLOTLY_CHART_CONFIG,
 )
 
 
@@ -57,11 +57,11 @@ def render_bank_profile():
     # Header Card định vị hồ sơ ngân hàng
     st.html(f"""
         <div style="background: {pal['bg_card']}; border: 1px solid {pal['border_color']}; border-left: 5px solid {pal['accent_cyan']}; border-radius: 12px; padding: 18px 22px; margin-bottom: 18px; box-shadow: 0 2px 10px {pal['shadow_color']};">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <div style="font-size: 11px; font-weight: 800; color: {pal['accent_cyan']}; text-transform: uppercase; letter-spacing: 1.2px;">
-                    🏛️ PHÂN HỆ 03 • HỒ SƠ NGÂN HÀNG TOÀN DIỆN (BANK FUNDAMENTAL PROFILE)
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 12px; margin-bottom: 6px;">
+                <div style="font-size: 11px; font-weight: 800; color: {pal['accent_cyan']}; text-transform: uppercase; letter-spacing: 1px;">
+                    🏛️ PHÂN HỆ 03 • HỒ SƠ NGÂN HÀNG TOÀN DIỆN (BANK PROFILE)
                 </div>
-                <span style="background: rgba(76, 201, 240, 0.08); color: {pal['accent_cyan']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 800;">
+                <span style="background: rgba(76, 201, 240, 0.08); color: {pal['accent_cyan']}; border: 1px solid {pal['border_color']}; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 800; white-space: nowrap;">
                     IN-DEPTH DUE DILIGENCE
                 </span>
             </div>
@@ -103,11 +103,11 @@ def render_bank_profile():
 
     # 2. BỐI CẢNH 5 TABS HỒ SƠ NGÂN HÀNG & THUYẾT MINH KIỂM TOÁN
     tab_capital, tab_credit, tab_earnings, tab_gov, tab_notes = st.tabs([
-        "🛡️ 1. An Toàn Vốn & Tài Sản (CAMELS)",
-        "📈 2. Tín Dụng & Thanh Khoản (LDR)",
-        "💰 3. Chất Lượng Lợi Nhuận (PPOP)",
-        "👥 4. Quản Trị & Ban Lãnh Đạo",
-        "📑 5. Thuyết Minh BCTC & Báo Cáo Kiểm Toán",
+        "🛡️ 1. An Toàn Vốn",
+        "📈 2. Tín Dụng (LDR)",
+        "💰 3. Lợi Nhuận (PPOP)",
+        "👥 4. Quản Trị",
+        "📑 5. Thuyết Minh BCTC",
     ])
 
     # =========================================================================
@@ -151,25 +151,25 @@ def render_bank_profile():
                 car_val = target_row["c_capital_car"]
                 car_cf = bool(target_row.get("is_car_carried_forward", False))
                 car_str = f"{car_val * 100:.1f}%" if pd.notnull(car_val) and car_val > 0 else "N/A"
-                car_sub = "TT14/2025: ≥ 8.0% (Kỳ bán niên gần nhất)" if car_cf else "TT14/2025: ≥ 8.0%"
-                render_led_card("Hệ Số CAR", car_str, car_sub, "AN TOÀN VỐN", "cyan")
+                car_sub = "TT14/2025: ≥ 8.0% (Bán niên)" if car_cf else "TT14/2025: ≥ 8.0%"
+                render_led_card("Hệ Số CAR", car_str, car_sub, "VỐN", "cyan")
             with k2:
                 npl_val = target_row["a_asset_quality_npl"]
                 npl_str = f"{npl_val * 100:.2f}%" if pd.notnull(npl_val) else "N/A"
                 status_npl = "mint" if (pd.notnull(npl_val) and npl_val <= 0.03) else "red"
-                render_led_card("Tỷ Lệ NPL", npl_str, "Trần tham chiếu: 3.0%", "CHẤT LƯỢNG TÀI SẢN", status_npl)
+                render_led_card("Tỷ Lệ NPL", npl_str, "Trần tham chiếu: 3.0%", "NỢ XẤU", status_npl)
             with k3:
                 llr_val = target_row.get("a_provision_llr")
                 llr_str = f"{llr_val * 100:.1f}%" if pd.notnull(llr_val) else "N/A"
-                render_led_card("Bao Nợ Xấu LLR", llr_str, "Bộ đệm dự phòng / NPL", "DỰ PHÒNG RỦI RO", "purple")
+                render_led_card("Bao Nợ Xấu LLR", llr_str, "Bộ đệm dự phòng / NPL", "DỰ PHÒNG", "purple")
             with k4:
                 cir_val = target_row["m_management_cir"]
                 cir_str = f"{cir_val * 100:.1f}%" if pd.notnull(cir_val) else "N/A"
-                render_led_card("Tỷ Lệ CIR", cir_str, "Chi phí / Thu nhập", "HIỆU QUẢ HOẠT ĐỘNG", "pink")
+                render_led_card("Tỷ Lệ CIR", cir_str, "Chi phí / Thu nhập", "HIỆU QUẢ", "pink")
             with k5:
                 casa_val = target_row.get("l_liquidity_casa")
                 casa_str = f"{casa_val * 100:.1f}%" if pd.notnull(casa_val) else "N/A"
-                render_led_card("Tỷ Lệ CASA", casa_str, "Tiền gửi không kỳ hạn", "NGUỒN VỐN RẺ", "gold")
+                render_led_card("Tỷ Lệ CASA", casa_str, "Tiền gửi không kỳ hạn", "NGUỒN VỐN", "gold")
 
             st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
@@ -276,19 +276,20 @@ def render_bank_profile():
                     fillcolor='rgba(217, 119, 6, 0.12)'
                 ))
                 fig_radar.update_layout(
+                    template="plotly_white" if pal["mode"] == "LIGHT" else "plotly_dark",
                     paper_bgcolor=pal["bg_card"],
                     plot_bgcolor=pal["bg_card"],
-                    font=dict(color=pal["text_body"], size=11),
+                    font=dict(color=pal["chart_tick"], size=12),
                     polar=dict(
                         bgcolor="rgba(0,0,0,0)",
-                        radialaxis=dict(visible=True, range=[0, 100], color=pal["chart_tick"], gridcolor=pal["grid_color"]),
-                        angularaxis=dict(color=pal["chart_title"], gridcolor=pal["grid_color"])
+                        radialaxis=dict(visible=True, range=[0, 100], tickfont=dict(color=pal["chart_tick"], size=11), gridcolor=pal["grid_color"]),
+                        angularaxis=dict(tickfont=dict(color=pal["chart_title"], size=12), gridcolor=pal["grid_color"])
                     ),
-                    legend=dict(orientation="h", yanchor="bottom", y=-0.18, xanchor="center", x=0.5),
+                    legend=dict(orientation="h", yanchor="bottom", y=-0.18, xanchor="center", x=0.5, font=dict(color=pal["chart_tick"], size=12)),
                     height=450,
                     margin=dict(l=70, r=70, t=35, b=55)
                 )
-                st.plotly_chart(fig_radar, use_container_width=True)
+                st.plotly_chart(fig_radar, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"camels_radar_{pal['mode']}")
 
             with c_npl_bar:
                 st.markdown(f"<h5 style='color: {pal['text_heading']}; margin-bottom: 8px;'>📊 Tỷ Lệ Nợ Xấu (NPL %) Toàn Ngành</h5>", unsafe_allow_html=True)
@@ -305,10 +306,10 @@ def render_bank_profile():
                     labels={"NPL_pct": "Tỷ lệ NPL (%)", "ticker": "Ngân hàng"},
                     height=450,
                 )
-                fig_npl.update_traces(marker_color=npl_sorted["bar_color"], textposition="outside", textfont=dict(size=10, color=pal["chart_title"]))
+                fig_npl.update_traces(marker_color=npl_sorted["bar_color"], textposition="outside", textfont=dict(size=11, color=pal["chart_title"]))
                 fig_npl.add_hline(y=3.0, line_dash="dash", line_color=pal["color_down"], line_width=1.5, annotation_text="Ngưỡng tham chiếu NHNN: 3.0%", annotation_position="top right")
                 fig_npl = apply_plotly_theme(fig_npl, height=450, title="Tỷ Lệ Nợ Xấu NPL (%) Của 27 Ngân Hàng")
-                st.plotly_chart(fig_npl, use_container_width=True)
+                st.plotly_chart(fig_npl, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"camels_npl_{pal['mode']}")
 
     # =========================================================================
     # TAB 2: TÍN DỤNG & THANH KHOẢN (LDR DYNAMICS)
@@ -380,9 +381,13 @@ def render_bank_profile():
                 marker_color=colors_gap,
                 opacity=0.45,
             ))
-            fig_gap = apply_plotly_theme(fig_gap, height=440, title=f"Diễn Biến Tăng Trưởng Dư Nợ vs Tiền Gửi & Credit Gap: {selected_ticker}")
-            fig_gap.update_layout(yaxis_title="Tăng trưởng cùng kỳ (%)", legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-            st.plotly_chart(fig_gap, use_container_width=True)
+            fig_gap.update_layout(
+                yaxis_title="Tăng trưởng cùng kỳ (%)",
+                legend=dict(orientation="h", yanchor="top", y=-0.22, xanchor="center", x=0.5),
+            )
+            fig_gap = apply_plotly_theme(fig_gap, height=450, title=f"Tăng Trưởng Dư Nợ vs Tiền Gửi & Credit Gap: {selected_ticker}")
+            fig_gap.update_layout(margin=dict(b=95))
+            st.plotly_chart(fig_gap, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"credit_gap_{pal['mode']}")
 
     # =========================================================================
     # TAB 3: CHẤT LƯỢNG LỢI NHUẬN & DỰ PHÒNG (EARNINGS QUALITY WATERFALL)
@@ -398,20 +403,20 @@ def render_bank_profile():
             ek1, ek2, ek3, ek4, ek5 = st.columns(5)
             with ek1:
                 toi_val = latest_eq.get("toi", 0)
-                render_led_card("Tổng Thu Nhập (TOI)", f"{toi_val / 1e9:,.0f} Tỷ", "Doanh thu hoạt động", "TỔNG THU NHẬP", "purple")
+                render_led_card("Tổng Thu Nhập (TOI)", f"{toi_val / 1e9:,.0f} Tỷ", "Doanh thu hoạt động", "TOI", "purple")
             with ek2:
                 ppop_val = latest_eq.get("ppop", 0)
-                render_led_card("Lợi Nhuận PPOP", f"{ppop_val / 1e9:,.0f} Tỷ", "LN thuần trước dự phòng", "LỢI NHUẬN CỐT LÕI", "cyan")
+                render_led_card("Lợi Nhuận PPOP", f"{ppop_val / 1e9:,.0f} Tỷ", "LN thuần trước dự phòng", "CỐT LÕI", "cyan")
             with ek3:
                 prov_val = latest_eq.get("provision_expense", 0)
-                render_led_card("Chi Phí Dự Phòng", f"{prov_val / 1e9:,.0f} Tỷ", "Trích lập rủi ro trong kỳ", "TRÍCH LẬP DỰ PHÒNG", "pink")
+                render_led_card("Chi Phí Dự Phòng", f"{prov_val / 1e9:,.0f} Tỷ", "Trích lập rủi ro trong kỳ", "TRÍCH LẬP", "pink")
             with ek4:
                 cc_val = latest_eq.get("credit_cost_ratio")
                 cc_str = f"{cc_val * 100:.2f}%" if pd.notnull(cc_val) else "N/A"
-                render_led_card("Chi Phí Tín Dụng", cc_str, "Chi phí dự phòng / Dư nợ", "CHI PHÍ TÍN DỤNG", "mint")
+                render_led_card("Chi Phí Tín Dụng", cc_str, "Dự phòng / Dư nợ", "CREDIT COST", "mint")
             with ek5:
                 npat_val = latest_eq.get("npat", 0)
-                render_led_card("Lợi Nhuận Ròng (NPAT)", f"{npat_val / 1e9:,.0f} Tỷ", f"ROE: {latest_eq.get('roe', 0)*100:.1f}%", "LỢI NHUẬN RÒNG", "gold")
+                render_led_card("Lợi Nhuận Ròng (NPAT)", f"{npat_val / 1e9:,.0f} Tỷ", f"ROE: {latest_eq.get('roe', 0)*100:.1f}%", "LN RÒNG", "gold")
 
             st.markdown("<div style='height: 12px;'></div>", unsafe_allow_html=True)
 
@@ -455,9 +460,9 @@ def render_bank_profile():
                 increasing={"marker": {"color": pal["color_up"]}},
                 totals={"marker": {"color": pal["color_brand"]}}
             ))
-            fig_wf = apply_plotly_theme(fig_wf, height=480, title=f"Phân Rã Thu Nhập Hoạt Động & Lợi Nhuận: {selected_ticker} (Đơn vị: Tỷ VND)")
             fig_wf.update_layout(yaxis_title="Giá trị (Tỷ VND)", showlegend=False)
-            st.plotly_chart(fig_wf, use_container_width=True)
+            fig_wf = apply_plotly_theme(fig_wf, height=480, title=f"Phân Rã Thu Nhập & Lợi Nhuận: {selected_ticker} (Tỷ VND)")
+            st.plotly_chart(fig_wf, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"eq_waterfall_{pal['mode']}")
 
             # Biểu đồ chuỗi thời gian Credit Cost
             c_cc1, c_cc2 = st.columns(2)
@@ -471,9 +476,9 @@ def render_bank_profile():
                     line=dict(color=pal["accent_pink"], width=2.5),
                     marker=dict(size=6),
                 ))
-                fig_cc = apply_plotly_theme(fig_cc, height=360, title=f"Xu Hướng Chi Phí Tín Dụng Thường Niên (Credit Cost %)")
                 fig_cc.update_layout(yaxis_title="Credit Cost (% / Dư nợ)")
-                st.plotly_chart(fig_cc, use_container_width=True)
+                fig_cc = apply_plotly_theme(fig_cc, height=380, title="Chi Phí Tín Dụng (Credit Cost %)")
+                st.plotly_chart(fig_cc, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"eq_credit_cost_{pal['mode']}")
 
             with c_cc2:
                 fig_non_int = go.Figure()
@@ -481,9 +486,10 @@ def render_bank_profile():
                 fig_non_int.add_trace(go.Bar(x=df_eq["period_name"], y=df_eq["net_gain_fx"] / 1e9, name="Ngoại hối (FX)", marker_color=pal["color_brand_led"]))
                 fig_non_int.add_trace(go.Bar(x=df_eq["period_name"], y=df_eq["net_gain_securities"] / 1e9, name="Chứng khoán", marker_color=pal["color_warn"]))
                 fig_non_int.add_trace(go.Bar(x=df_eq["period_name"], y=df_eq["other_operating_income_residual"] / 1e9, name="Thu khác", marker_color=pal["color_up"]))
-                fig_non_int.update_layout(barmode="stack", yaxis_title="Tỷ VND", legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
-                fig_non_int = apply_plotly_theme(fig_non_int, height=360, title="Cơ Cấu Thu Nhập Ngoài Lãi (Non-Interest Income)")
-                st.plotly_chart(fig_non_int, use_container_width=True)
+                fig_non_int.update_layout(barmode="stack", yaxis_title="Tỷ VND", legend=dict(orientation="h", yanchor="top", y=-0.26, xanchor="center", x=0.5))
+                fig_non_int = apply_plotly_theme(fig_non_int, height=380, title="Cơ Cấu Thu Nhập Ngoài Lãi (Tỷ VND)")
+                fig_non_int.update_layout(margin=dict(b=95))
+                st.plotly_chart(fig_non_int, use_container_width=True, theme=None, config=PLOTLY_CHART_CONFIG, key=f"eq_non_int_{pal['mode']}")
 
     # =========================================================================
     # TAB 4: QUẢN TRỊ & BAN LÃNH ĐẠO (CORPORATE GOVERNANCE)
