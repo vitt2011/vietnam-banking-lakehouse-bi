@@ -1,6 +1,6 @@
 @echo off
 chcp 65001 > nul
-title [Stock_Analysis] Tien Trinh Cap Nhat Du Lieu Tu Dong Hang Ngay
+title [Vietnam_Banking_Lakehouse] Tien Trinh Cap Nhat Du Lieu Tu Dong Hang Ngay
 
 echo ===============================================================================
 echo     TIEN TRINH TU DONG DONG BO GIA TANG DU LIEU HANG NGAY (DAILY UPDATE)
@@ -8,19 +8,22 @@ echo ===========================================================================
 echo Thoi gian khoi chay: %date% %time%
 
 set SCRIPT_DIR=%~dp0
-set PROJECT_DIR=%SCRIPT_DIR%..
+for %%I in ("%SCRIPT_DIR%..") do set PROJECT_DIR=%%~fI
 cd /d "%PROJECT_DIR%"
 
 if exist "%PROJECT_DIR%\.venv\Scripts\python.exe" (
-    set PYTHON_EXE="%PROJECT_DIR%\.venv\Scripts\python.exe"
+    set "PYTHON_EXE=%PROJECT_DIR%\.venv\Scripts\python.exe"
+) else if exist "%PROJECT_DIR%\..\Stock_Analysis\.venv\Scripts\python.exe" (
+    set "PYTHON_EXE=%PROJECT_DIR%\..\Stock_Analysis\.venv\Scripts\python.exe"
 ) else (
-    set PYTHON_EXE=python
+    set "PYTHON_EXE=python"
 )
 
+set "PYTHONPATH=%PROJECT_DIR%\src;%PROJECT_DIR%;%PYTHONPATH%"
 echo Dang su dung Python: %PYTHON_EXE%
 echo.
 
-%PYTHON_EXE% "%SCRIPT_DIR%03_run_pipeline.py" --mode daily
+"%PYTHON_EXE%" "%SCRIPT_DIR%03_run_pipeline.py" --mode daily
 
 if %ERRORLEVEL% equ 0 (
     echo.
@@ -33,4 +36,3 @@ if %ERRORLEVEL% equ 0 (
 
 echo ===============================================================================
 if not "%1"=="--no-pause" pause
-
