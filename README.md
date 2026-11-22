@@ -47,7 +47,6 @@ Rather than merely plotting raw API tables, this project resolves real-world fin
 
 ## 3. Five Interactive BI & Research Modules
 
-Includes a **1-click Guided Mode ("Chế độ Giải thích Nhanh")** in the sidebar for non-finance reviewers and Light/Dark theme switching:
 
 | Module | Business Purpose | Core Capabilities |
 | :--- | :--- | :--- |
