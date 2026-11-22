@@ -1,0 +1,93 @@
+# ==============================================================================
+# THIẾT LẬP HỆ THỐNG TẬP TRUNG (ENTERPRISE DATA PLATFORM SETTINGS)
+# Tuân thủ đặc tả: KIEN_TRUC_DATALAKE_DWH_MDM.md
+# ==============================================================================
+
+project:
+  name: "Vietnam Commercial Banking Data Platform (27 Banks)"
+  university: "Đại học Bách Khoa Hà Nội (HUST)"
+  school: "Khoa Toán - Tin"
+  degree: "Đồ án II Toán - Tin K68"
+  student: "Nguyễn Văn Việt (MSSV: 20237407 - Lớp: Toán Tin 01 - K68)"
+  advisor: "TS. Nguyễn Danh Tú"
+  version: "2.0.0-enterprise"
+  timezone: "Asia/Ho_Chi_Minh"
+
+database:
+  rdbms: "postgresql"
+  host: "localhost"
+  port: 5432
+  dbname: "Stock_Warehouse"
+  user: "postgres"
+  password_env_var: "DB_PASS"
+  schemas:
+    staging: "staging"
+    master_data: "master_data"
+    mart_valuation: "mart_valuation"
+    mart_camels: "mart_camels"
+    mart_technical: "mart_technical"
+    mart_governance: "mart_governance"
+    mart_sentiment: "mart_sentiment"
+    metadata: "metadata"
+  pool:
+    min_conn: 2
+    max_conn: 20
+    pool_size: 5
+    max_overflow: 10
+    pool_pre_ping: true
+    pool_timeout: 30
+
+data_lake:
+  root_dir: "../DataLake"
+  layers:
+    bronze:
+      path: "../DataLake/01_bronze"
+      format: "jsonl.gz / parquet"
+      description: "Immutable Raw Data preserving original schemas and audit columns"
+    silver:
+      path: "../DataLake/02_silver"
+      format: "snappy.parquet"
+      compression: "snappy"
+      description: "Cleaned, Conformed, MDM standardized, partitioned Parquet"
+    gold:
+      path: "../DataLake/03_gold"
+      format: "snappy.parquet"
+      compression: "snappy"
+      description: "Curated Business Marts for DWH load and analytical query"
+    quarantine:
+      path: "../DataLake/02_silver/_quarantine"
+      description: "Dead-Letter Queue for records violating Data Quality rules"
+      subfolders:
+        schema_violations: "../DataLake/02_silver/_quarantine/01_Loi_Cau_Truc_Schema"
+        reconciliation_failures: "../DataLake/02_silver/_quarantine/02_Loi_Doi_Soat_Ke_Toan"
+
+  domains:
+    market_trading: "market_trading"
+    financials: "financials"
+    macro_monetary: "macro_monetary"
+    corporate_actions: "corporate_actions"
+    governance_network: "governance_network"
+    financial_news: "financial_news"
+
+trading_calendar:
+  start_year: 2015
+  end_year: 2030
+  cut_off_time: "15:00:00"
+  settlement_time: "15:15:00"
+  market_close_time: "15:00:00"
+
+data_quality_tolerances:
+  accounting_identity_epsilon_vnd: 1000000000.0   # Tối đa 1.0 tỷ VND do làm tròn
+  loan_group_sum_epsilon_vnd: 1000000000.0        # Tối đa 1.0 tỷ VND
+  pbt_reconciliation_epsilon_vnd: 500000000.0     # Tối đa 0.5 tỷ VND
+  outlier_mad_multiplier: 3.5                     # 3.5 x MAD so với 8 quý trước
+  exchange_price_bands:
+    HOSE: 0.07                                    # Biên độ trần sàn +/- 7%
+    HNX: 0.10                                     # Biên độ trần sàn +/- 10%
+    UPCOM: 0.15                                   # Biên độ trần sàn +/- 15%
+
+sla_latencies:
+  market_eod_minutes: 35                          # Chốt sau 15:35 ngày giao dịch
+  financials_quarterly_hours: 24                  # 24 giờ sau khi ngân hàng công bố
+  macro_daily_hours: 2                            # Sau 17:00 ngày làm việc
+  news_micro_batch_hours: 4                       # Cào 3 lần/ngày

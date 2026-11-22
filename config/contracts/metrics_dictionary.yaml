@@ -1,0 +1,94 @@
+version: 2.0-PRODUCTION
+domain: VIETNAM_BANKING_INVESTMENT_RESEARCH
+metrics:
+  CAMELS_C_CAR:
+    name: Capital Adequacy Ratio (CAR)
+    description: Tỷ lệ an toàn vốn tối thiểu theo Thông tư 41/2016/TT-NHNN (Basel II)
+    formula: Von_Tu_Co_Tier1_Tier2 / Tong_Tai_San_Co_Rui_Ro_RWA
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 0.08'
+
+  CAMELS_A_NPL:
+    name: Non-Performing Loans Ratio (NPL)
+    description: Tỷ lệ nợ xấu (nhóm 3 + nhóm 4 + nhóm 5 trên tổng dư nợ cho vay)
+    formula: Tong_No_Xau_Nhom_3_4_5 / Tong_Du_No_Cho_Vay
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: <= 0.03
+
+  CAMELS_A_LLR:
+    name: Loan Loss Reserve Coverage (LLR)
+    description: Tỷ lệ bao phủ nợ xấu (quỹ dự phòng rủi ro cho vay trên tổng nợ xấu)
+    formula: So_Du_Du_Phong_Rui_Ro / Tong_No_Xau_Nhom_3_4_5
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 1.00'
+
+  CAMELS_M_CIR:
+    name: Cost to Income Ratio (CIR)
+    description: Tỷ lệ chi phí hoạt động trên tổng thu nhập hoạt động (TOI)
+    formula: Tong_Chi_Phi_Hoat_Dong / Tong_Thu_Nhap_Hoat_Dong_TOI
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: <= 0.35
+
+  CAMELS_E_NIM:
+    name: Net Interest Margin (NIM TTM)
+    description: Biên lãi thuần 4 quý gần nhất trượt (TTM)
+    formula: Thu_Nhap_Lai_Thuan_TTM / Tai_San_Sinh_Lai_Binh_Quan
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 0.035'
+
+  CAMELS_E_ROE:
+    name: Return on Average Equity (ROAE TTM)
+    description: Tỷ suất sinh lời trên vốn chủ sở hữu bình quân 4 quý trượt
+    formula: SUM(NPAT_Q0 + NPAT_Q_minus_1 + NPAT_Q_minus_2 + NPAT_Q_minus_3) / AVERAGE(Equity_Q0, Equity_Q_minus_1, Equity_Q_minus_2, Equity_Q_minus_3)
+    methodology_note: Mẫu số sử dụng trung bình cộng 4 số dư vốn chủ sở hữu cuối quý gần nhất theo quy ước kế toán quản trị nội bộ của hệ thống; đây là một trong các phương pháp tính chuẩn mực nhưng không phải là phương pháp duy nhất trên thị trường.
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 0.15'
+
+  CAMELS_L_CASA:
+    name: Current Account Savings Account Ratio (CASA)
+    description: Tỷ lệ tiền gửi không kỳ hạn và ký quỹ trên tổng tiền gửi khách hàng
+    formula: (Tien_Gui_Khong_Ky_Han + Tien_Gui_Ky_Quy) / Tong_Tien_Gui_Khach_Hang
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 0.20'
+
+  CAMELS_S_NIM_SENSITIVITY:
+    name: Sensitivity to Market Risk (NIM Sensitivity / Interest Rate Gap)
+    description: Độ nhạy cảm trước rủi ro thị trường và biến động lãi suất, đo lường bằng biên đệm an toàn NIM TTM so với chi phí vốn và khe hở tài sản nhạy cảm lãi suất
+    formula: NIM_TTM / 0.035 (chuẩn hóa trên dải 2.0% - 5.5% đối chiếu lãi suất điều hành SBV)
+    unit: percent
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_camels_engine
+    grain: bank_sk x fiscal_year x fiscal_quarter
+    target_benchmark: '>= 0.035'
+
+  VALUATION_GORDON_PB:
+    name: Gordon Growth Target P/B
+    description: Giá trị P/B hợp lý theo mô hình tăng trưởng cổ tức Gordon
+    formula: (ROE - g) / (Ke - g)
+    parameters:
+      Ke: 0.13
+      g: 0.06
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_valuation_matrix
+    grain: bank_sk x fiscal_year x fiscal_quarter
+
+  TECHNICAL_RSI_14:
+    name: Relative Strength Index 14 Days (RSI)
+    description: Chỉ báo sức mạnh giá tương đối chu kỳ 14 phiên
+    formula: 100 - (100 / (1 + RS))
+    authoritative_source: stock_analysis.transformation.silver_to_gold.feature_technical_indicators
+    grain: bank_sk x date_sk
+    overbought_threshold: 70.0
+    oversold_threshold: 30.0

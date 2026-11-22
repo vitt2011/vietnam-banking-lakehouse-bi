@@ -1,0 +1,27 @@
+# Python & Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Secrets & Local Config (NEVER COMMIT)
+.env
+.env.local
+*.pem
+*.key
+
+# Runtime Logs & Temporary Backups
+runtime/logs/
+runtime/backups/
+*.log
+
+# OS / IDE Junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

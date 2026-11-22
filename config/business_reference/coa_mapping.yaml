@@ -1,0 +1,212 @@
+# ==============================================================================
+# BẢNG TỪ ĐIỂN ÁNH XẠ KHOẢN MỤC BÁO CÁO TÀI CHÍNH (CHART OF ACCOUNTS - COA MAPPING)
+# Tuân thủ: Thông tư 49/2014/TT-NHNN & Thông tư 27/2021/TT-NHNN
+# ==============================================================================
+
+balance_sheet:
+  total_assets:
+    standard_code: "BS_100"
+    vietnamese_name: "Tổng Tài Sản Có"
+    english_name: "Total Assets"
+    accounting_equation_role: "ASSET"
+    source_mappings:
+      tcbs: ["totalAssets", "asset"]
+      vietstock: ["TongTaiSan", "TotalAssets"]
+      vnstock: ["asset", "total_asset", "total_assets"]
+
+  cash_and_sbv_balances:
+    standard_code: "BS_101"
+    vietnamese_name: "Tiền mặt, vàng bạc & Tiền gửi tại NHNN"
+    english_name: "Cash and Balances with the State Bank"
+    source_mappings:
+      tcbs: ["cashAndCentralBankBalances", "cashAndEquivalents"]
+      vietstock: ["TienMatVaNgoaiTe", "TienGuiTaiNHNN"]
+      vnstock: ["cash_and_sbv", "cash"]
+
+  interbank_placements:
+    standard_code: "BS_102"
+    vietnamese_name: "Tiền gửi tại và cho vay các TCTD khác"
+    english_name: "Balances with and Loans to other Credit Institutions"
+    source_mappings:
+      tcbs: ["depositsAndLoansToOtherBanks"]
+      vietstock: ["TienGuiTaiVaChoVayTCTDKhac"]
+      vnstock: ["interbank_placements"]
+
+  trading_inv_securities:
+    standard_code: "BS_103"
+    vietnamese_name: "Chứng khoán kinh doanh & đầu tư"
+    english_name: "Trading and Investment Securities"
+    source_mappings:
+      tcbs: ["securities"]
+      vietstock: ["ChungKhoanKinhDoanh", "ChungKhoanDauTu"]
+      vnstock: ["securities"]
+
+  gross_customer_loans:
+    standard_code: "BS_104"
+    vietnamese_name: "Cho vay khách hàng (Dư nợ gộp)"
+    english_name: "Gross Customer Loans"
+    accounting_equation_role: "KEY_EARNING_ASSET"
+    source_mappings:
+      tcbs: ["customerLoans", "loansToCustomers"]
+      vietstock: ["ChoVayKhachHang"]
+      vnstock: ["gross_loans", "customer_loans"]
+
+  loan_loss_reserves:
+    standard_code: "BS_105"
+    vietnamese_name: "Dự phòng rủi ro cho vay khách hàng"
+    english_name: "Provision for Loan Losses"
+    source_mappings:
+      tcbs: ["provisionForCreditLosses", "allowanceForLoans"]
+      vietstock: ["DuPhongRuiRoChoVay"]
+      vnstock: ["loan_loss_provisions", "provisions"]
+
+  total_liabilities:
+    standard_code: "BS_200"
+    vietnamese_name: "Tổng Nợ Phải Trả"
+    english_name: "Total Liabilities"
+    accounting_equation_role: "LIABILITY"
+    source_mappings:
+      tcbs: ["totalLiabilities", "liabilities"]
+      vietstock: ["TongNoPhaiTra"]
+      vnstock: ["debt", "total_liabilities"]
+
+  sbv_borrowings:
+    standard_code: "BS_201"
+    vietnamese_name: "Các khoản nợ Chính phủ và NHNN"
+    english_name: "Borrowings from the State Bank and Government"
+    source_mappings:
+      tcbs: ["dueToCentralBank"]
+      vietstock: ["VayNHNNVaChinhPhu"]
+      vnstock: ["sbv_borrowings"]
+
+  interbank_deposits_borr:
+    standard_code: "BS_202"
+    vietnamese_name: "Tiền gửi và vay các TCTD khác"
+    english_name: "Deposits and Borrowings from other Credit Institutions"
+    source_mappings:
+      tcbs: ["depositsAndBorrowingsFromOtherBanks"]
+      vietstock: ["TienGuiVaVayTCTDKhac"]
+      vnstock: ["interbank_borrowings"]
+
+  customer_deposits:
+    standard_code: "BS_203"
+    vietnamese_name: "Tiền gửi của khách hàng"
+    english_name: "Customer Deposits"
+    accounting_equation_role: "CORE_FUNDING"
+    source_mappings:
+      tcbs: ["customerDeposits", "depositsFromCustomers"]
+      vietstock: ["TienGuiKhachHang"]
+      vnstock: ["customer_deposits", "deposits"]
+
+  valuable_papers_issued:
+    standard_code: "BS_204"
+    vietnamese_name: "Phát hành giấy tờ có giá"
+    english_name: "Valuable Papers Issued / Debt Securities"
+    source_mappings:
+      tcbs: ["valuablePapersIssued"]
+      vietstock: ["PhatHanhGiayToCoGia"]
+      vnstock: ["valuable_papers"]
+
+  total_equity:
+    standard_code: "BS_300"
+    vietnamese_name: "Tổng Vốn Chủ Sở Hữu"
+    english_name: "Total Equity"
+    accounting_equation_role: "EQUITY"
+    source_mappings:
+      tcbs: ["ownersEquity", "totalEquity"]
+      vietstock: ["TongVonChuSoHuu"]
+      vnstock: ["equity", "owners_equity"]
+
+  charter_capital:
+    standard_code: "BS_301"
+    vietnamese_name: "Vốn điều lệ"
+    english_name: "Charter Capital"
+    source_mappings:
+      tcbs: ["charterCapital", "capital"]
+      vietstock: ["VonDieuLe"]
+      vnstock: ["charter_capital"]
+
+  retained_earnings:
+    standard_code: "BS_302"
+    vietnamese_name: "Lợi nhuận chưa phân phối"
+    english_name: "Retained Earnings"
+    source_mappings:
+      tcbs: ["retainedEarnings", "undistributedProfits"]
+      vietstock: ["LoiNhuanChuaPhanPhoi"]
+      vnstock: ["retained_earnings"]
+
+loan_classification_notes:
+  loan_group_1_standard:
+    standard_code: "NOTE_LG_1"
+    vietnamese_name: "Nợ Đủ Tiêu Chuẩn (Nhóm 1)"
+    english_name: "Standard Loans (Group 1)"
+  loan_group_2_mention:
+    standard_code: "NOTE_LG_2"
+    vietnamese_name: "Nợ Cần Chú Ý (Nhóm 2)"
+    english_name: "Special Mention Loans (Group 2)"
+  loan_group_3_substd:
+    standard_code: "NOTE_LG_3"
+    vietnamese_name: "Nợ Dưới Tiêu Chuẩn (Nhóm 3)"
+    english_name: "Substandard Loans (Group 3)"
+  loan_group_4_doubtful:
+    standard_code: "NOTE_LG_4"
+    vietnamese_name: "Nợ Nghi Ngờ (Nhóm 4)"
+    english_name: "Doubtful Loans (Group 4)"
+  loan_group_5_loss:
+    standard_code: "NOTE_LG_5"
+    vietnamese_name: "Nợ Có Khả Năng Mất Vốn (Nhóm 5)"
+    english_name: "Loss Loans (Group 5)"
+
+income_statement:
+  interest_income:
+    standard_code: "IS_01"
+    vietnamese_name: "Thu nhập lãi và các khoản thu nhập tương tự"
+    english_name: "Interest and Similar Income"
+  interest_expense:
+    standard_code: "IS_02"
+    vietnamese_name: "Chi phí lãi và các khoản chi phí tương tự"
+    english_name: "Interest and Similar Expenses"
+  net_interest_income:
+    standard_code: "IS_03"
+    vietnamese_name: "Thu nhập lãi thuần (NII)"
+    english_name: "Net Interest Income"
+  net_fee_commission_inc:
+    standard_code: "IS_04"
+    vietnamese_name: "Lãi thuần từ hoạt động dịch vụ"
+    english_name: "Net Fee and Commission Income"
+  net_fx_trading_inc:
+    standard_code: "IS_05"
+    vietnamese_name: "Lãi thuần từ kinh doanh ngoại hối và vàng"
+    english_name: "Net Foreign Exchange Trading Income"
+  net_sec_investment_inc:
+    standard_code: "IS_06"
+    vietnamese_name: "Lãi thuần từ mua bán chứng khoán"
+    english_name: "Net Gain from Securities Investment"
+  other_operating_inc:
+    standard_code: "IS_07"
+    vietnamese_name: "Lãi thuần từ hoạt động khác"
+    english_name: "Net Other Operating Income"
+  total_operating_income:
+    standard_code: "IS_10"
+    vietnamese_name: "Tổng thu nhập hoạt động (TOI)"
+    english_name: "Total Operating Income"
+  operating_expenses:
+    standard_code: "IS_11"
+    vietnamese_name: "Tổng chi phí hoạt động (OPEX)"
+    english_name: "Operating Expenses"
+  pre_provision_profit:
+    standard_code: "IS_12"
+    vietnamese_name: "Lợi nhuận thuần trước chi phí dự phòng rủi ro (PPOP)"
+    english_name: "Pre-Provision Operating Profit"
+  provision_expenses:
+    standard_code: "IS_13"
+    vietnamese_name: "Chi phí dự phòng rủi ro tín dụng"
+    english_name: "Provision Expenses for Credit Losses"
+  profit_before_tax:
+    standard_code: "IS_14"
+    vietnamese_name: "Tổng lợi nhuận trước thuế (PBT)"
+    english_name: "Profit Before Tax"
+  net_profit_after_tax:
+    standard_code: "IS_15"
+    vietnamese_name: "Lợi nhuận sau thuế của ngân hàng mẹ (NPAT)"
+    english_name: "Net Profit After Tax"

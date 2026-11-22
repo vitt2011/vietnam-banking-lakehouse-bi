@@ -1,0 +1,73 @@
+version: 2.0-PRODUCTION
+contracts:
+  bronze:
+    market_ohlcv:
+      required_columns:
+      - time
+      - open
+      - high
+      - low
+      - close
+      - volume
+      - ticker
+      - sector
+      null_constraints:
+      - time
+      - close
+      - ticker
+    financial_statements:
+      required_columns:
+      - ticker
+      - year
+      - quarter
+      null_constraints:
+      - ticker
+      - year
+      - quarter
+  silver:
+    stock_ohlcv:
+      required_columns:
+      - bank_sk
+      - date_sk
+      - open
+      - high
+      - low
+      - close
+      - volume
+      - turnover_vnd
+      - return_daily_pct
+      grain:
+      - bank_sk
+      - date_sk
+      hive_partitioning:
+      - exchange
+      - year
+  gold:
+    camels_health_scorecard:
+      required_columns:
+      - bank_sk
+      - year
+      - quarter
+      - composite_score
+      - c_score
+      - a_score
+      - m_score
+      - e_score
+      - l_score
+      grain:
+      - bank_sk
+      - year
+      - quarter
+    valuation_matrix:
+      required_columns:
+      - bank_sk
+      - year
+      - quarter
+      - pb_ratio
+      - pe_ratio
+      - target_pb_gordon
+      - roe_ttm
+      grain:
+      - bank_sk
+      - year
+      - quarter

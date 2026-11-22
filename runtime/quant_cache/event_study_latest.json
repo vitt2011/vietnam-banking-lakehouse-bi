@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "total_events_analyzed": 141,
+    "methodology": "Market Model OLS ([-130, -10]) + Benjamini-Hochberg FDR on Unscrambled OHLCV",
+    "generated_at": "2026-11-22T17:39:59.008981"
+  },
+  "windows_summary": [
+    {
+      "event_type": "Cổ tức Tiền mặt",
+      "event_code": "CASH",
+      "window": "[-5, -1]",
+      "n_events": 41,
+      "mean_car_pct": 1.0908,
+      "t_stat": 2.375,
+      "p_value_raw": 0.0224,
+      "p_value_fdr_bh": 0.069,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Tiền mặt",
+      "event_code": "CASH",
+      "window": "[+0, +5]",
+      "n_events": 41,
+      "mean_car_pct": -0.5998,
+      "t_stat": -1.044,
+      "p_value_raw": 0.3029,
+      "p_value_fdr_bh": 0.4039,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Tiền mặt",
+      "event_code": "CASH",
+      "window": "[-5, +5]",
+      "n_events": 41,
+      "mean_car_pct": 0.491,
+      "t_stat": 0.656,
+      "p_value_raw": 0.5157,
+      "p_value_fdr_bh": 0.5894,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Tiền mặt",
+      "event_code": "CASH",
+      "window": "[-10, +10]",
+      "n_events": 41,
+      "mean_car_pct": 1.7324,
+      "t_stat": 1.439,
+      "p_value_raw": 0.1581,
+      "p_value_fdr_bh": 0.3161,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Cổ phiếu",
+      "event_code": "STOCK",
+      "window": "[-5, -1]",
+      "n_events": 100,
+      "mean_car_pct": -0.2387,
+      "t_stat": -0.36,
+      "p_value_raw": 0.7195,
+      "p_value_fdr_bh": 0.7195,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Cổ phiếu",
+      "event_code": "STOCK",
+      "window": "[+0, +5]",
+      "n_events": 100,
+      "mean_car_pct": 1.0695,
+      "t_stat": 2.262,
+      "p_value_raw": 0.0259,
+      "p_value_fdr_bh": 0.069,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Cổ phiếu",
+      "event_code": "STOCK",
+      "window": "[-5, +5]",
+      "n_events": 100,
+      "mean_car_pct": 0.8308,
+      "t_stat": 1.092,
+      "p_value_raw": 0.2777,
+      "p_value_fdr_bh": 0.4039,
+      "significant_fdr_5pct": false
+    },
+    {
+      "event_type": "Cổ tức Cổ phiếu",
+      "event_code": "STOCK",
+      "window": "[-10, +10]",
+      "n_events": 100,
+      "mean_car_pct": 2.8652,
+      "t_stat": 2.914,
+      "p_value_raw": 0.0044,
+      "p_value_fdr_bh": 0.0353,
+      "significant_fdr_5pct": true
+    }
+  ],
+  "car_curves": {
+    "rel_days": [
+      -5,
+      -4,
+      -3,
+      -2,
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "CASH": [
+      0.18,
+      0.204,
+      0.569,
+      0.916,
+      1.091,
+      0.737,
+      0.475,
+      0.21,
+      0.438,
+      0.318,
+      0.491
+    ],
+    "STOCK": [
+      -0.559,
+      -1.165,
+      -0.901,
+      -0.636,
+      -0.239,
+      1.816,
+      1.178,
+      0.755,
+      0.751,
+      0.848,
+      0.831
+    ]
+  }
+}

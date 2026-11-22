@@ -1,0 +1,273 @@
+version: '2.0'
+target_sector: Ngan_Hang
+banks:
+- ticker: ABB
+  brand_short_name: ABBank
+  legal_name_vi: Ngân hàng TMCP An Bình
+  legal_name_en: ''
+  tax_code: 0100619478
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 10350367000000.0
+  listing_date: '2020-12-28'
+  is_active: true
+- ticker: ACB
+  brand_short_name: ACB
+  legal_name_vi: Ngân hàng TMCP Á Châu
+  legal_name_en: ''
+  tax_code: 0301452948
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 44666555000000.0
+  listing_date: '2006-11-21'
+  is_active: true
+- ticker: BAB
+  brand_short_name: Bac A Bank
+  legal_name_vi: Ngân hàng TMCP Bắc Á
+  legal_name_en: ''
+  tax_code: '2900325521'
+  exchange_code: HNX
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 8959000000000.0
+  listing_date: '2021-03-03'
+  is_active: true
+- ticker: BID
+  brand_short_name: BIDV
+  legal_name_vi: Ngân hàng TMCP Đầu tư và Phát triển Việt Nam
+  legal_name_en: ''
+  tax_code: 0100150619
+  exchange_code: HOSE
+  bank_tier_group: STATE_BIG4
+  charter_capital_vnd: 57004359000000.0
+  listing_date: '2014-01-24'
+  is_active: true
+- ticker: BVB
+  brand_short_name: BVBank
+  legal_name_vi: Ngân hàng TMCP Bản Việt
+  legal_name_en: ''
+  tax_code: '2000106528'
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 5018000000000.0
+  listing_date: '2020-07-09'
+  is_active: true
+- ticker: CTG
+  brand_short_name: VietinBank
+  legal_name_vi: Ngân hàng TMCP Công Thương Việt Nam
+  legal_name_en: ''
+  tax_code: 0100111948
+  exchange_code: HOSE
+  bank_tier_group: STATE_BIG4
+  charter_capital_vnd: 53699919500000.0
+  listing_date: '2009-07-16'
+  is_active: true
+- ticker: EIB
+  brand_short_name: Eximbank
+  legal_name_vi: Ngân hàng TMCP Xuất Nhập Khẩu Việt Nam
+  legal_name_en: ''
+  tax_code: 0301179079
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 17469561000000.0
+  listing_date: '2009-10-22'
+  is_active: true
+- ticker: HDB
+  brand_short_name: HDBank
+  legal_name_vi: Ngân hàng TMCP Phát triển TP.HCM
+  legal_name_en: ''
+  tax_code: 0300608092
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 29076326000000.0
+  listing_date: '2018-01-05'
+  is_active: true
+- ticker: KLB
+  brand_short_name: Kienlongbank
+  legal_name_vi: Ngân hàng TMCP Kiên Long
+  legal_name_en: ''
+  tax_code: '1700197787'
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 3652819000000.0
+  listing_date: '2017-06-29'
+  is_active: true
+- ticker: LPB
+  brand_short_name: LPBank
+  legal_name_vi: Ngân hàng TMCP Lộc Phát Việt Nam
+  legal_name_en: ''
+  tax_code: '6300048638'
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 25576165000000.0
+  listing_date: '2020-11-09'
+  is_active: true
+- ticker: MBB
+  brand_short_name: MBBank
+  legal_name_vi: Ngân hàng TMCP Quân Đội
+  legal_name_en: ''
+  tax_code: 0100283873
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 52870845000000.0
+  listing_date: '2011-11-01'
+  is_active: true
+- ticker: MSB
+  brand_short_name: MSB
+  legal_name_vi: Ngân hàng TMCP Hàng Hải Việt Nam
+  legal_name_en: ''
+  tax_code: 0200124891
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 26000000000000.0
+  listing_date: '2020-12-23'
+  is_active: true
+- ticker: NAB
+  brand_short_name: Nam A Bank
+  legal_name_vi: Ngân hàng TMCP Nam Á
+  legal_name_en: ''
+  tax_code: 0300879889
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 10580416000000.0
+  listing_date: '2024-03-08'
+  is_active: true
+- ticker: NVB
+  brand_short_name: NCB
+  legal_name_vi: Ngân hàng TMCP Quốc Dân
+  legal_name_en: ''
+  tax_code: 0100579078
+  exchange_code: HNX
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 5601550000000.0
+  listing_date: '2010-09-21'
+  is_active: true
+- ticker: OCB
+  brand_short_name: OCB
+  legal_name_vi: Ngân hàng TMCP Phương Đông
+  legal_name_en: ''
+  tax_code: 0300852005
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 24658045000000.0
+  listing_date: '2021-01-28'
+  is_active: true
+- ticker: PGB
+  brand_short_name: PGBank
+  legal_name_vi: Ngân hàng TMCP Thịnh vượng và Phát triển
+  legal_name_en: ''
+  tax_code: 0100777595
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 4200000000000.0
+  listing_date: '2020-12-24'
+  is_active: true
+- ticker: SGB
+  brand_short_name: Saigonbank
+  legal_name_vi: Ngân hàng TMCP Sài Gòn Công Thương
+  legal_name_en: ''
+  tax_code: 0300610419
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 3080000000000.0
+  listing_date: '2020-10-15'
+  is_active: true
+- ticker: SHB
+  brand_short_name: SHB
+  legal_name_vi: Ngân hàng TMCP Sài Gòn - Hà Nội
+  legal_name_en: ''
+  tax_code: '1800278630'
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 36629120000000.0
+  listing_date: '2009-04-20'
+  is_active: true
+- ticker: SSB
+  brand_short_name: SeABank
+  legal_name_vi: Ngân hàng TMCP Đông Nam Á
+  legal_name_en: ''
+  tax_code: '0200167734'
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 28350000000000.0
+  listing_date: '2021-03-24'
+  is_active: true
+- ticker: STB
+  brand_short_name: Sacombank
+  legal_name_vi: Ngân hàng TMCP Sài Gòn Thương Tín
+  legal_name_en: ''
+  tax_code: 0301103908
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 18852148000000.0
+  listing_date: '2006-07-12'
+  is_active: true
+- ticker: TCB
+  brand_short_name: Techcombank
+  legal_name_vi: Ngân hàng TMCP Kỹ Thương Việt Nam
+  legal_name_en: ''
+  tax_code: 0100230800
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 70450239000000.0
+  listing_date: '2018-06-04'
+  is_active: true
+- ticker: TPB
+  brand_short_name: TPBank
+  legal_name_vi: Ngân hàng TMCP Tiên Phong
+  legal_name_en: ''
+  tax_code: 0102744865
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 22016350000000.0
+  listing_date: '2018-04-19'
+  is_active: true
+- ticker: VAB
+  brand_short_name: VietABank
+  legal_name_vi: Ngân hàng TMCP Việt Á
+  legal_name_en: ''
+  tax_code: 0302963650
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 5399650000000.0
+  listing_date: '2021-07-20'
+  is_active: true
+- ticker: VBB
+  brand_short_name: VietBank
+  legal_name_vi: Ngân hàng TMCP Việt Nam Thương Tín
+  legal_name_en: ''
+  tax_code: '1900498706'
+  exchange_code: UPCOM
+  bank_tier_group: TIER3_SMALL
+  charter_capital_vnd: 4776822000000.0
+  listing_date: '2019-12-27'
+  is_active: true
+- ticker: VCB
+  brand_short_name: Vietcombank
+  legal_name_vi: Ngân hàng TMCP Ngoại thương Việt Nam
+  legal_name_en: ''
+  tax_code: '0100112437'
+  exchange_code: HOSE
+  bank_tier_group: STATE_BIG4
+  charter_capital_vnd: 55890914440000.0
+  listing_date: '2009-06-30'
+  is_active: true
+- ticker: VIB
+  brand_short_name: VIB
+  legal_name_vi: Ngân hàng TMCP Quốc tế Việt Nam
+  legal_name_en: ''
+  tax_code: 0100793095
+  exchange_code: HOSE
+  bank_tier_group: TIER2_MIDCAP
+  charter_capital_vnd: 25368075000000.0
+  listing_date: '2020-11-10'
+  is_active: true
+- ticker: VPB
+  brand_short_name: VPBank
+  legal_name_vi: Ngân hàng TMCP Việt Nam Thịnh Vượng
+  legal_name_en: ''
+  tax_code: 0100233583
+  exchange_code: HOSE
+  bank_tier_group: TIER1_PRIVATE
+  charter_capital_vnd: 79339236000000.0
+  listing_date: '2017-08-17'
+  is_active: true
